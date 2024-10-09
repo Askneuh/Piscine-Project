@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:piscine}",
+            "name": "Debug piscine",
+            "program": "${workspaceFolder:piscine}/.build/debug/piscine",
+            "preLaunchTask": "swift: Build Debug piscine"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:piscine}",
+            "name": "Release piscine",
+            "program": "${workspaceFolder:piscine}/.build/release/piscine",
+            "preLaunchTask": "swift: Build Release piscine"
+        }
+    ]
+}
