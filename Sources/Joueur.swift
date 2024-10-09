@@ -100,6 +100,71 @@ struct Joueur : JoueurProtocol
         }
         return res    
     }
-
+func calculScore() -> Int
+    /*
+    Calcul la somme des cartes qui n'ont pas de carte voisine ayant la meme valeur.
+    Sortie :
+    */ 
+    {
+        var somme : Int = 0
+       for i in 0...self.grille.count-1
+       {
+            for j in 0...self.grille[i].count-1
+            {
+                var voisinDistinct: Bool = true
+                if let c : Carte = self.grille[i][j]
+                {
+                    //Verification du voisin du haut
+                    if i > 0 
+                    {
+                        if let ch : Carte = self.grille[i - 1][j]
+                        {
+                            if ch.numero == c.numero{
+                                voisinDistinct = false
+                            }
+                        }
+                    }
+                    
+                    //Verification du voisin du bas
+                    if i < self.grille.count-1
+                    {
+                        if let cb : Carte = self.grille[i + 1][j]
+                        {
+                            if cb.numero == c.numero{
+                                voisinDistinct = false
+                            }
+                        }
+                    }
+                    //Verification du voisin de gauche
+                    if j > 0
+                    {
+                        if let cg : Carte = self.grille[i][j - 1]
+                        {
+                            if cg.numero == c.numero{
+                                voisinDistinct = false
+                            }
+                        }
+                    }
+                    //verification du voisin de droite 
+                    if j < self.grille[i].count-1
+                    {
+                        if let cd : Carte = self.grille[i][j+1]
+                        {
+                            if cd.numero == c.numero{
+                                voisinDistinct = false
+                            }
+                        }
+                    }
+                    if voisinDistinct
+                    {
+                        somme += c.numero
+                    } 
+                }
+                
+            }
+        }
+        return somme     
+    }
+    mutating func inserer(sens : String, i : Int, j : Int){}
 }
 
