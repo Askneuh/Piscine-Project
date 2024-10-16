@@ -6,9 +6,10 @@ func AffGrille(joueur : Joueur)
         {
             if let c : Carte = joueur.grille[i][j]
             {
-                print(c.numero)
+                print(c.numero, terminator: " ")
             }
             
         }
+        print(" ")
     }
 }
