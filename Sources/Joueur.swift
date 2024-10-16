@@ -50,7 +50,6 @@ struct Joueur : JoueurProtocol
                 }                
             }
         }
-        print("allo")
         return paquet
     }
 
