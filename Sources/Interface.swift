@@ -13,3 +13,15 @@ func AffGrille(joueur : Joueur)
         print(" ")
     }
 }
+
+func demanderLigne() -> Int{
+    print("Choisissez l'indice de ligne")
+    if let input = readLine()
+    {
+        if let int = Int(input)
+        {
+            return int
+        }
+    }
+return 50 
+}
