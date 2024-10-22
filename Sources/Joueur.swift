@@ -167,4 +167,3 @@ func calculScore() -> Int
     }
     mutating func inserer(sens : String, i : Int, j : Int){}
 }
-
