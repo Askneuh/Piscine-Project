@@ -32,25 +32,22 @@ struct Joueur : JoueurProtocol
     */
     {    
         for i in 0...self.grille.count-1
+        
         {
             for j in 0...self.grille[i].count-1
             {
                 var randomInt : Int = Int.random(in: 0...paquet.count-1)
-                if let c : Carte = self.grille[i][j]
-                {
-                    while c.numero == 0
+                while paquet[randomInt] == nil
                     {
-                        if let c1 : Carte = paquet[randomInt]
-                        {
-                            self.grille[i][j] = c1
-                            paquet[randomInt] = nil
-                        }
-                        else
-                        {
-                            randomInt = Int.random(in: 0...paquet.count-1)
-                        }
+                        randomInt = Int.random(in: 0...paquet.count-1)   
                     }
-                }
+                
+                
+                if let c1 : Carte = paquet[randomInt]
+                { 
+                    self.grille[i][j] = c1
+                    paquet[randomInt] = nil
+                }                
             }
         }
         return paquet
@@ -166,5 +163,5 @@ func calculScore() -> Int
         return somme     
     }
     mutating func inserer(sens : String, i : Int, j : Int){}
-}
 
+}
