@@ -165,5 +165,4 @@ func calculScore() -> Int
         }
         return somme     
     }
-    mutating func inserer(sens : String, i : Int, j : Int){}
 }
