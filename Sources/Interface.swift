@@ -22,6 +22,11 @@ func demanderLigne() -> Int{
         {
             return int
         }
+        else
+        {
+            print("Veuillez entrer un nombre")
+            return demanderLigne()
+        }
     }
-return 50 
+
 }
