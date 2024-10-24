@@ -5,46 +5,53 @@ protocol PartieProtocol {
     var ordrePassage : [Joueur] {get set}
     var Centre : [Carte?]{get set}
     init(nbJoueur:Int)    
-    func placerAuCentre(carte:Carte)
+    func placerAuCentre(carte : Carte)
     func retirerDuCentre(indice:Int)
+    mutating func selectionner(paquet : inout[Carte?])->Carte
     mutating func changerOrdrePassage()
 }
 
 struct Partie{
+    
+    var nbJoueur: Int
+    var ordrePassage: [Joueur]
+    var Centre: [Carte?]
+    var Paquet: [Carte?]
 
-    init(nbJoueur:Int){
-        self.nbJoueur=nbJoueur   
-        self.ordrePassage : [Joueur] = [Joueur](repeating: Joueur(name: ""), count: nbJoueur)
-        self.Centre : [Carte?] = [Carte?](repeating: nil, count: nbJoueur)
+    init(_ nbJoueur: Int) {
+        self.nbJoueur = nbJoueur
+        self.ordrePassage = [Joueur](repeating: Joueur(name: ""), count: nbJoueur)
+        self.Centre = [Carte?](repeating: nil, count: nbJoueur)
+    }
+
+    
+
+    
+
+    mutating func placerAuCentre(carte : Carte){
+        for k: Int in 0..<ordrePassage.count{
+            let ligne : Int = demanderLigne()
+            let colonne : Int = demandeColonne()
+            var carte_temp : Carte =  self.ordrePassage[k].piocher(i : ligne, j : colonne)
+            Centre[k] = carte_temp
         }
 
-    var nbJoueur: Int 
-    var ordrePassage : [Joueur]
-    var Centre : [Carte?]
-    var Paquet : [Carte?]
-
-    // 
-    mutating func placerAuCentre()->[Carte?]{
-        for i: Int in 0..<ordrePassage.count{
-            Centre[i]=selectionner(paquet:&Paquet)    }
-        return Centre
     }
 
 
     //renvoie une carte selectionnée aléatoirement de la pioche et met nul à la place
-    func selectionner(paquet : inout[Carte?])->Carte{  
+    mutating func selectionner(paquet : inout[Carte?])->Carte{  
 
         var randomInt : Int = Int.random(in: 0...paquet.count-1)
-        var carteSelectionnee : Carte
-        
-        if let cartePiochee : Carte = paquet[randomInt]{
-            carteSelectionnee = cartePiochee
-            paquet[randomInt]=nil
-        }
-        else {
+
+        while paquet[randomInt] == nil{
             randomInt = Int.random(in: 0...paquet.count-1)
         }
-        return carteSelectionnee
+        if let cartePiochee : Carte = paquet[randomInt]{
+            paquet[randomInt]=nil
+            return cartePiochee
+        }
+        else{return Carte(numero : 0)} //Ce cas ne devrait jamais arriver (voir la boucle while)
     }
 
 
