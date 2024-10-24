@@ -1,11 +1,10 @@
+"""
 enum Direction {
     case Haut
     case Bas
     case Droite
     case Gauche }
 
-var deplacementPossible : Bool = false
-while deplacementPossible==false {
     //var deplacement : Direction ("entrer clavier : demander à l'utilisateur quel deplacement il souhaite effectuer")
 
     func deplacer(deplacement : Direction, carte : Carte)->[[Int?]]{
@@ -20,7 +19,6 @@ while deplacementPossible==false {
                 return Grille
             }
             else {
-                deplacementPossible=true
                 for i in ligneTrou ... Grille.count-2{
                     Grille[i][colonneTrou]=Grille[i+1][colonneTrou]         }
                 return Grille
@@ -33,7 +31,7 @@ while deplacementPossible==false {
                 return Grille
             }
             else {
-                deplacementPossible=true 
+
                 for i in stride(from:ligneTrou, to: 1, by: -1){
                     Grille[i][colonneTrou]=Grille[i-1][colonneTrou]          }
                 return Grille
@@ -46,7 +44,7 @@ while deplacementPossible==false {
                 return Grille
             }
             else {
-                deplacementPossible=true
+
                 for i in stride(from: colonneTrou, to:1, by: -1){
                    Grille[ligneTrou][i]=Grille[ligneTrou][i-1]             }
                 return Grille
@@ -59,7 +57,6 @@ while deplacementPossible==false {
                 return Grille
             }
             else {
-                deplacementPossible=true
                 for i in colonneTrou...Grille[0].count-2{
                     Grille[ligneTrou][i]=Grille[ligneTrou][i+1]             }
                 return Grille
@@ -67,5 +64,5 @@ while deplacementPossible==false {
             }
         }
     }
-} 
+"""
 
