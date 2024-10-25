@@ -5,7 +5,7 @@ protocol JoueurProtocol
     var grille : [[Carte?]] {get set}
     mutating func distribue(paquet : inout [Carte?]) -> [Carte?]
     mutating func piocher(i : Int, j : Int) -> Carte
-    mutating func deplacer(deplacement : Direction, carte : Carte)
+    mutating func deplacer(deplacement : Direction, carte : Carte, i : Int, j : Int)
     func calculScore() -> Int
     func estComplet() -> Bool
 }
