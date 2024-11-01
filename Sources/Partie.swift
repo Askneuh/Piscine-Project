@@ -30,8 +30,8 @@ struct Partie{
 
     mutating func placerAuCentre(carte : Carte){
         for k: Int in 0..<ordrePassage.count{
-            let ligne : Int = demanderLigne()
-            let colonne : Int = demandeColonne()
+            let ligne : Int = 0 //demanderLigne()
+            let colonne : Int = 0 //demandeColonne() (à remplacer une fois les fonctions implémentées)
             var carte_temp : Carte =  self.ordrePassage[k].piocher(i : ligne, j : colonne)
             Centre[k] = carte_temp
         }
@@ -136,7 +136,7 @@ struct Partie{
         let occurence2 : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[1], indice2: 0)
         let occurence3 : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[2], indice2: 0)
 
-        var mini : [Joueur] //création d'un mini tableau de joueurs
+        var mini : [Joueur] = [Joueur]((repeating: Joueur(name: " "), count: 3)) //création d'un mini tableau de joueurs
         mini[0]=occurence1[0]
         mini[1]=occurence2[0]
         mini[2]=occurence3[0]
