@@ -53,6 +53,7 @@ struct Joueur : JoueurProtocol
         return paquet
     }
 
+
     mutating func piocher(i: Int, j: Int) -> Carte
     /*
     Renvoie la carte situé à l'indice de ligne i et de colonne j et la supprime dans la grille
