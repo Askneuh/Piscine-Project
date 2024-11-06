@@ -5,7 +5,7 @@ protocol JoueurProtocol
     var grille : [[Carte?]] {get set}
     mutating func distribue(paquet : inout [Carte?]) -> [Carte?]
     mutating func piocher(i : Int, j : Int) -> Carte
-    mutating func inserer(sens : String, i : Int, j : Int)
+    mutating func deplacer(deplacement : Direction, carte : Carte, i : Int, j : Int)
     func calculScore() -> Int
     func estComplet() -> Bool
 }
@@ -53,6 +53,7 @@ struct Joueur : JoueurProtocol
         return paquet
     }
 
+
     mutating func piocher(i: Int, j: Int) -> Carte
     /*
     Renvoie la carte situé à l'indice de ligne i et de colonne j et la supprime dans la grille
@@ -97,71 +98,127 @@ struct Joueur : JoueurProtocol
         }
         return res    
     }
-func calculScore() -> Int
-    /*
-    Calcul la somme des cartes qui n'ont pas de carte voisine ayant la meme valeur.
-    Sortie :
-    */ 
-    {
-        var somme : Int = 0
-       for i in 0...self.grille.count-1
-       {
-            for j in 0...self.grille[i].count-1
-            {
-                var voisinDistinct: Bool = true
-                if let c : Carte = self.grille[i][j]
+    func calculScore() -> Int
+        /*
+        Calcul la somme des cartes qui n'ont pas de carte voisine ayant la meme valeur.
+        Sortie :
+        */ 
+        {
+            var somme : Int = 0
+        for i in 0...self.grille.count-1
+        {
+                for j in 0...self.grille[i].count-1
                 {
-                    //Verification du voisin du haut
-                    if i > 0 
+                    var voisinDistinct: Bool = true
+                    if let c : Carte = self.grille[i][j]
                     {
-                        if let ch : Carte = self.grille[i - 1][j]
+                        //Verification du voisin du haut
+                        if i > 0 
                         {
-                            if ch.numero == c.numero{
-                                voisinDistinct = false
+                            if let ch : Carte = self.grille[i - 1][j]
+                            {
+                                if ch.numero == c.numero{
+                                    voisinDistinct = false
+                                }
                             }
                         }
+                        
+                        //Verification du voisin du bas
+                        if i < self.grille.count-1
+                        {
+                            if let cb : Carte = self.grille[i + 1][j]
+                            {
+                                if cb.numero == c.numero{
+                                    voisinDistinct = false
+                                }
+                            }
+                        }
+                        //Verification du voisin de gauche
+                        if j > 0
+                        {
+                            if let cg : Carte = self.grille[i][j - 1]
+                            {
+                                if cg.numero == c.numero{
+                                    voisinDistinct = false
+                                }
+                            }
+                        }
+                        //verification du voisin de droite 
+                        if j < self.grille[i].count-1
+                        {
+                            if let cd : Carte = self.grille[i][j+1]
+                            {
+                                if cd.numero == c.numero{
+                                    voisinDistinct = false
+                                }
+                            }
+                        }
+                        if voisinDistinct
+                        {
+                            somme += c.numero
+                        } 
                     }
                     
-                    //Verification du voisin du bas
-                    if i < self.grille.count-1
-                    {
-                        if let cb : Carte = self.grille[i + 1][j]
-                        {
-                            if cb.numero == c.numero{
-                                voisinDistinct = false
-                            }
-                        }
-                    }
-                    //Verification du voisin de gauche
-                    if j > 0
-                    {
-                        if let cg : Carte = self.grille[i][j - 1]
-                        {
-                            if cg.numero == c.numero{
-                                voisinDistinct = false
-                            }
-                        }
-                    }
-                    //verification du voisin de droite 
-                    if j < self.grille[i].count-1
-                    {
-                        if let cd : Carte = self.grille[i][j+1]
-                        {
-                            if cd.numero == c.numero{
-                                voisinDistinct = false
-                            }
-                        }
-                    }
-                    if voisinDistinct
-                    {
-                        somme += c.numero
-                    } 
                 }
-                
             }
-        }
         return somme     
     }
-    mutating func inserer(sens : String, i : Int, j : Int){}
+    mutating func deplacer(deplacement : Direction, carte : Carte,i : Int, j : Int){
+        let ligneTrou : Int = i // nom de la variable utilisée pour enlever une carte de la grille
+        let colonneTrou : Int = j
 
+        switch deplacement{
+
+            case .Haut :
+            if (ligneTrou==self.grille.count-1){
+                print("déplacement impossible, veuillez séléctionner déplacement valide")
+            }
+            else {
+                for k in ligneTrou ... self.grille.count-2{
+                    self.grille[k][colonneTrou]=self.grille[k+1][colonneTrou]         }
+                self.grille[self.grille.count-1][colonneTrou]=carte
+            }
+
+            case .Bas :
+            if (ligneTrou==0){
+                print("déplacement impossible, veuillez séléctionner déplacement valide")
+            }
+            else {
+
+                for l in stride(from:ligneTrou, to: 1, by: -1){
+                    self.grille[l][colonneTrou]=self.grille[l-1][colonneTrou]          }
+                self.grille[0][colonneTrou]=carte
+            }
+
+            case.Droite :
+            if (colonneTrou==0){
+                print("déplacement impossible, veuillez séléctionner déplacement valide")
+            }
+            else {
+
+                for m in stride(from: colonneTrou, to:1, by: -1)
+                {
+                   self.grille[ligneTrou][m]=self.grille[ligneTrou][m-1]        
+                }
+                self.grille[ligneTrou][self.grille.count-1]=carte
+            }
+
+            case .Gauche:
+            if (colonneTrou==self.grille.count-1){
+                print("déplacement impossible, veuillez séléctionner déplacement valide")
+            }
+            else {
+                for n in colonneTrou...self.grille[0].count-2{
+                    self.grille[ligneTrou][n]=self.grille[ligneTrou][n+1]             }
+                self.grille[ligneTrou][0]=carte
+            }
+        }
+    }
+    
 }
+
+enum Direction {
+        case Haut
+        case Bas
+        case Droite
+        case Gauche }
