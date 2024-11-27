@@ -14,7 +14,7 @@ while !commencerPartie
     {
         if nb >= 2 && nb <= 4
         {
-            print("La partie commence avec", nbJoueur, "joueurs.")
+            print("La partie commence avec", nb, "joueurs.")
             commencerPartie = true
         }
         else
