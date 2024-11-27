@@ -14,19 +14,18 @@ func AffGrille(joueur : Joueur)
     }
 }
 
-func demanderLigne() -> Int{
-    print("Choisissez l'indice de ligne")
-    if let input = readLine()
-    {
-        if let int = Int(input)
+func affPaquet(paquet : [Carte?]) -> [Int]
+{
+    var res : [Int] = [Int](repeating: 0, count: 100)
+    for i in  0..<paquet.count{
+        if let carte : Carte = paquet[i]
         {
-            return int
+            res[i] = carte.numero
         }
         else
         {
-            print("Veuillez entrer un nombre")
-            return demanderLigne()
+            res[i] = 0
         }
     }
-
+    return res
 }
