@@ -24,6 +24,11 @@ struct Partie{
         self.ordrePassage = [Joueur](repeating: Joueur(name: ""), count: nbJoueur)
         self.Centre = [Carte?](repeating: nil, count: nbJoueur)
         self.Paquet = paquet
+        for i in 0..<ordrePassage.count
+        {
+            var nom : String = demanderNomJoueur(i : i)
+            ordrePassage[i] = Joueur(name: nom)
+        }
     }
 
     mutating func distributionCarte(){
