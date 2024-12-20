@@ -124,6 +124,7 @@ struct Partie{
         return tableauModifie
     }
 
+    //cas de base, permet de determiner l'odre du / des premiers joueurs
     mutating func firstRoad()->[Joueur]{
         
     let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: Centre)
