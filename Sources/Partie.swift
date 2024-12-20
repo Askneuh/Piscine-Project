@@ -1,6 +1,7 @@
 import Foundation
 
 protocol PartieProtocol {
+
     var nbJoueur : Int {get}
     var ordrePassage : [Joueur] {get set}
     var Centre : [Carte?]{get set}
@@ -15,31 +16,31 @@ protocol PartieProtocol {
 struct Partie{
     
     var nbJoueur: Int
-    var ordrePassage : [Joueur] 
-    var Centre: [Carte?]
-    var Paquet: [Carte?]
+    var ordrePassage : [Joueur] // tableau définissant l'ordre des joueurs 
+    var Centre: [Carte?]        // tableau des cartes piochées par les joueurs
+    var Paquet: [Carte?]        // paquet de carte
 
+    // initialiser une partie
     init(nbJoueur: Int, paquet : [Carte?] ) {
         self.nbJoueur = nbJoueur
         self.ordrePassage = [Joueur](repeating: Joueur(name: ""), count: nbJoueur)
         self.Centre = [Carte?](repeating: nil, count: nbJoueur)
         self.Paquet = paquet
-        for i in 0..<ordrePassage.count
-        {
+
+        for i in 0..<ordrePassage.count        {
             var nom : String = demanderNomJoueur(i : i)
             ordrePassage[i] = Joueur(name: nom)
         }
     }
 
+    // distribution des cartes pour le cas de base
     mutating func distributionCarte(){
         for i in 0..<ordrePassage.count{
             self.Paquet = ordrePassage[i].distribue(paquet: &self.Paquet)
         }
     }
-    
 
-    
-
+    // lors d'un tour, un joueur selectionne une carte qu'il place dans sa grille, qui est placée dans le tableau 'Centre'
     mutating func placerAuCentre(carte : Carte){
         for k: Int in 0..<ordrePassage.count{
             let ligne : Int = 0 //demanderLigne()
@@ -77,6 +78,7 @@ struct Partie{
         return Carte(numero : 0) //Ce cas ne devrait jamais arriver
     }
 
+    //modifie l'ordre de passage des joueurs
     mutating func changerOrdrePassage()->[Joueur]{
         let dernierJoueur : Joueur = ordrePassage[0]
         for i in 0..<ordrePassage.count-1{
@@ -84,6 +86,9 @@ struct Partie{
             ordrePassage[ordrePassage.count-1]=dernierJoueur
         return ordrePassage
     }
+
+
+    // fonctions nécéssaires à la fonction du cas de base
 
     //prenant un tableau de carte (le tableau Centre), il permet d'avoir des informations pour le cas de base 
     //précondition : le tableau est rempli
