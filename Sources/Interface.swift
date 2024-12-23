@@ -6,7 +6,15 @@ func AffGrille(joueur : Joueur)
         {
             if let c : Carte = joueur.grille[i][j]
             {
+                if c.estFaceCachee{
+                    print("?", terminator: " ")
+                }
+                else{
                 print(c.numero, terminator: " ")
+                }
+            }
+            else{
+                print(" ")
             }
             
         }
@@ -30,20 +38,21 @@ func affPaquet(paquet : [Carte?]) -> [Int]
     return res
 }
 
-func demanderNbJoueur() -> Int?
+func demanderNbJoueur() -> Int
 {
     var commencerPartie : Bool = false
-    var nbJoueur : Int?
+    var nbJoueur : Int = 0
     while !commencerPartie
     {
         print("Combien de joueur souhaitez vous faire participer ?")
-        let nbJoueur: Int? = Int(readLine()!)
-        if let nb : Int = nbJoueur
+        let saisie: Int? = Int(readLine()!)
+        if let nb : Int = saisie
         {
             if nb >= 2 && nb <= 4
             {
                 print("La partie commence avec", nb, "joueurs.")
                 commencerPartie = true
+                nbJoueur = nb
             }
             else
             {
@@ -70,3 +79,36 @@ func demanderNomJoueur(i : Int) -> String
     }
     return ""
 }
+func demanderIndice() -> Int{
+    var isOK : Bool = false
+    var i : Int = 0
+    while !isOK{
+        print("numéro de ligne de la carte à enlever : ")
+        let saisieI : Int? = Int(readLine()!)
+            if let l : Int = saisieI{
+                if l < 4{
+                    i = l
+                    isOK = true
+                }
+                else{
+                    print("le numéro de ligne ne correspond pas")
+                }
+            }
+            else{
+                print("veuillez saisir un chiffre entre 0 et 3")
+            }
+    }
+    return i
+}
+
+func affCentre(centre : [Carte?]){
+    for elt in centre{
+        if let c : Carte = elt{
+            print(c.numero)
+        }
+        else{
+            print(0)
+            }   
+    }
+}
+    

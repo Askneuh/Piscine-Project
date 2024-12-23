@@ -4,15 +4,15 @@ protocol PartieProtocol {
     var nbJoueur : Int {get}
     var ordrePassage : [Joueur] {get set}
     var Centre : [Carte?]{get set}
-    init(nbJoueur:Int)    
-    func placerAuCentre(carte : Carte)
-    func retirerDuCentre(indice:Int)
+    init(nbJoueur:Int, paquet : [Carte?])    
+    mutating func placerAuCentre()
+    mutating func retirerDuCentre(indice:Int)->Carte
     mutating func selectionner()->Carte
     mutating func changerOrdrePassage()
     mutating func distributionCarte()
 }
 
-struct Partie{
+struct Partie : PartieProtocol{
     
     var nbJoueur: Int
     var ordrePassage : [Joueur] 
@@ -26,7 +26,7 @@ struct Partie{
         self.Paquet = paquet
         for i in 0..<ordrePassage.count
         {
-            var nom : String = demanderNomJoueur(i : i)
+            var nom : String = demanderNomJoueur(i : i+1)
             ordrePassage[i] = Joueur(name: nom)
         }
     }
@@ -40,14 +40,15 @@ struct Partie{
 
     
 
-    mutating func placerAuCentre(carte : Carte){
+    mutating func placerAuCentre(){
         for k: Int in 0..<ordrePassage.count{
-            let ligne : Int = 0 //demanderLigne()
-            let colonne : Int = 0 //demandeColonne() (à remplacer une fois les fonctions implémentées)
+            print("Au tour de ", partie.ordrePassage[k].name)
+            AffGrille(joueur: partie.ordrePassage[k])
+            let ligne : Int = demanderIndice() //demanderLigne()
+            let colonne : Int = demanderIndice() //demandeColonne() (à remplacer une fois les fonctions implémentées)
             let carte_temp : Carte =  self.ordrePassage[k].piocher(i : ligne, j : colonne)
             Centre[k] = carte_temp
         }
-
     }
 
 
@@ -77,17 +78,16 @@ struct Partie{
         return Carte(numero : 0) //Ce cas ne devrait jamais arriver
     }
 
-    mutating func changerOrdrePassage()->[Joueur]{
+    mutating func changerOrdrePassage(){
         let dernierJoueur : Joueur = ordrePassage[0]
         for i in 0..<ordrePassage.count-1{
             ordrePassage[i]=ordrePassage[i+1]      }
             ordrePassage[ordrePassage.count-1]=dernierJoueur
-        return ordrePassage
     }
 
     //prenant un tableau de carte (le tableau Centre), il permet d'avoir des informations pour le cas de base 
     //précondition : le tableau est rempli
-    func occMinEtIndice(Tab : [Carte?])->(occurence : Int, indice : [Int]){
+    private func occMinEtIndice(Tab : [Carte?])->(occurence : Int, indice : [Int]){
 
         let TabSansNul : [Carte] = Tab.compactMap { $0 } // permet de créer un tableau fait uniquement d'entier
 
@@ -111,7 +111,7 @@ struct Partie{
         return (occ, indice)
     }
 
-    func echanger2cases (tableau : [Joueur], indice1: Int, indice2: Int)->[Joueur]{
+    private func echanger2cases (tableau : [Joueur], indice1: Int, indice2: Int)->[Joueur]{
         var tableauModifie : [Joueur] = tableau
         let temp : Joueur = tableau[indice1]
         tableauModifie[indice1] = tableauModifie[indice2]
@@ -119,7 +119,7 @@ struct Partie{
         return tableauModifie
     }
 
-    mutating func firstRoad()->[Joueur]{
+    private mutating func firstRoad()->[Joueur]{
         
     let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: Centre)
 
