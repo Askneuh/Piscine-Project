@@ -1,9 +1,6 @@
 // The Swift Programming Language
 // https://docs.swift.org/swift-book
 
-print("Hello, world!")
-var j1 : Joueur = Joueur(name : "Seb")
-AffGrille(joueur : j1)
 
 var nbJoueur : Int = demanderNbJoueur()
 print(type(of: nbJoueur))
@@ -17,9 +14,30 @@ for numero in 1...10 {
 }
 var partie : PartieProtocol = Partie(nbJoueur: nbJoueur, paquet: paquet)
 partie.distributionCarte()
-    
-partie.placerAuCentre()
-affCentre(centre: partie.Centre)
+for h in 0...1{
+    for i: Int in 0..<partie.ordrePassage.count {
+        print("Au tour de ", partie.ordrePassage[i].name)
+        AffGrille(joueur: partie.ordrePassage[i])
+        partie.placerAuCentre(k: i)
+        AffGrille(joueur: partie.ordrePassage[i])
+    }
+    print("\n")
+    for k: Int in 0..<partie.ordrePassage.count {
+        print("tour de ", partie.ordrePassage[k].name)
+        AffGrille(joueur: partie.ordrePassage[k])
+        print("\n")
+        affCentre(centre: partie.Centre)
+        var i: Int = choisirCarteCentre(nbJoueur: nbJoueur)
+        var carte : Carte = partie.retirerDuCentre(indice: i)
+        while !(partie.ordrePassage[k].estComplet()){
+            var dir : Direction = demanderDirection(joueur: partie.ordrePassage[k])
+            partie.ordrePassage[k].deplacer(deplacement: dir, carte: carte, i: partie.ordrePassage[k].coordCaseVide.0, j: partie.ordrePassage[k].coordCaseVide.1)
+            AffGrille(joueur: partie.ordrePassage[k])
+        }
+    }
+}
+for i in 0..<partie.ordrePassage.count{
+    print(partie.ordrePassage[i].name, partie.ordrePassage[i].calculScore())
+}
 
 
-    

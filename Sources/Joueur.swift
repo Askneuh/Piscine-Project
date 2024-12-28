@@ -8,15 +8,18 @@ protocol JoueurProtocol
     mutating func deplacer(deplacement : Direction, carte : Carte, i : Int, j : Int)
     func calculScore() -> Int
     func estComplet() -> Bool
+    var coordCaseVide : (Int, Int) {get}
 }
 struct Joueur : JoueurProtocol
 {
+    var coordCaseVide: (Int, Int)
     var name : String = " "
     var grille :[[Carte?]] = [[Carte?]](repeating: [Carte?](repeating: Carte(numero: 0), count: 4), count: 4)
     init(name : String)
     {
         self.name = name
         self.grille = [[Carte?]](repeating: [Carte?](repeating: Carte(numero: 0), count: 4), count: 4)
+        self.coordCaseVide = (-1, -1)
     }
 
 
@@ -66,11 +69,17 @@ struct Joueur : JoueurProtocol
     {   
         if let c : Carte = self.grille[i][j]
         {
-            self.grille[i][j] = nil
+            print(c.numero)
+            defer{
+                self.grille[i][j] = nil
+                self.coordCaseVide = (i, j)
+            }
             return c
         }
-        //Ce cas ne devrait pas arriver
-        return Carte(numero : 0)
+        else{
+            //Ce cas ne devrait pas arriver
+            return Carte(numero : 0)
+        }
     }
 
 
@@ -163,6 +172,7 @@ struct Joueur : JoueurProtocol
             }
         return somme     
     }
+        
     mutating func deplacer(deplacement : Direction, carte : Carte,i : Int, j : Int){
         let ligneTrou : Int = i // nom de la variable utilisée pour enlever une carte de la grille
         let colonneTrou : Int = j
@@ -175,7 +185,8 @@ struct Joueur : JoueurProtocol
             }
             else {
                 for k in ligneTrou ... self.grille.count-2{
-                    self.grille[k][colonneTrou]=self.grille[k+1][colonneTrou]         }
+                    self.grille[k][colonneTrou]=self.grille[k+1][colonneTrou]
+                }
                 self.grille[self.grille.count-1][colonneTrou]=carte
             }
 
@@ -185,22 +196,22 @@ struct Joueur : JoueurProtocol
             }
             else {
 
-                for l in stride(from:ligneTrou, to: 1, by: -1){
+                for l in stride(from:ligneTrou, to: 0, by: -1){
                     self.grille[l][colonneTrou]=self.grille[l-1][colonneTrou]          }
                 self.grille[0][colonneTrou]=carte
             }
 
-            case.Droite :
+            case .Droite :
             if (colonneTrou==0){
                 print("déplacement impossible, veuillez séléctionner déplacement valide")
             }
             else {
 
-                for m in stride(from: colonneTrou, to:1, by: -1)
+                for m in stride(from: colonneTrou, to:0, by: -1)
                 {
                    self.grille[ligneTrou][m]=self.grille[ligneTrou][m-1]        
                 }
-                self.grille[ligneTrou][self.grille.count-1]=carte
+                self.grille[ligneTrou][0]=carte
             }
 
             case .Gauche:
@@ -210,15 +221,11 @@ struct Joueur : JoueurProtocol
             else {
                 for n in colonneTrou...self.grille[0].count-2{
                     self.grille[ligneTrou][n]=self.grille[ligneTrou][n+1]             }
-                self.grille[ligneTrou][0]=carte
+                self.grille[ligneTrou][self.grille.count-1]=carte
             }
         }
+        self.coordCaseVide = (-1, -1)
     }
     
 }
 
-enum Direction {
-        case Haut
-        case Bas
-        case Droite
-        case Gauche }

@@ -5,7 +5,7 @@ protocol PartieProtocol {
     var ordrePassage : [Joueur] {get set}
     var Centre : [Carte?]{get set}
     init(nbJoueur:Int, paquet : [Carte?])    
-    mutating func placerAuCentre()
+    mutating func placerAuCentre(k: Int)
     mutating func retirerDuCentre(indice:Int)->Carte
     mutating func selectionner()->Carte
     mutating func changerOrdrePassage()
@@ -40,15 +40,13 @@ struct Partie : PartieProtocol{
 
     
 
-    mutating func placerAuCentre(){
-        for k: Int in 0..<ordrePassage.count{
-            print("Au tour de ", partie.ordrePassage[k].name)
-            AffGrille(joueur: partie.ordrePassage[k])
-            let ligne : Int = demanderIndice() //demanderLigne()
-            let colonne : Int = demanderIndice() //demandeColonne() (à remplacer une fois les fonctions implémentées)
-            let carte_temp : Carte =  self.ordrePassage[k].piocher(i : ligne, j : colonne)
-            Centre[k] = carte_temp
-        }
+    mutating func placerAuCentre(k: Int) {
+        var copieOrdrePassage: [Joueur] = self.ordrePassage
+        let ligne: Int = demanderIndice()
+        let colonne: Int = demanderIndice()
+        let carteTemp: Carte = copieOrdrePassage[k].piocher(i: ligne, j: colonne)
+        Centre[k] = carteTemp
+        self.ordrePassage = copieOrdrePassage
     }
 
 
@@ -121,63 +119,64 @@ struct Partie : PartieProtocol{
 
     private mutating func firstRoad()->[Joueur]{
         
-    let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: Centre)
+        let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: Centre)
 
-    if occ==1{
-        let OrdreJ : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0)
-        return OrdreJ        }
+        if occ==1{
+            let OrdreJ : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0)
+        return OrdreJ        
+        }
 
-    else if occ==2{
-        let Occurence1 : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0) //un preimer tableau qui va mettre en premier indice le joueur qui a la carte la plus petite en premier
-        let Occurence2 : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[1], indice2: 0) // un deuxième tableau qui va mettre en premier indice le joueur qui a eu la carte la plus petite en deuxième
-        var mini : [Joueur] = [Joueur](repeating: Joueur(name: " "), count: 2)  //création d'un mini tableau de joueurs, pour qu'il puisse piocher de nouveau dans la pioche et pouvoir déterminer qui joue en premier
-        mini[0]=Occurence1[0]
-        mini[1]=Occurence2[0]
-        var duel : [Carte] = [Carte](repeating: Carte(numero: 0), count: 2) //création de l'endroit où mettre les cartes piochées
-        duel[0]=selectionner()
-        duel[1]=selectionner()
-
-        while duel[0].numero==duel[1].numero{
+        else if occ==2{
+            let Occurence1 : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0) //un preimer tableau qui va mettre en premier indice le joueur qui a la carte la plus petite en premier
+            let Occurence2 : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[1], indice2: 0) // un deuxième tableau qui va mettre en premier indice le joueur qui a eu la carte la plus petite en deuxième
+            var mini : [Joueur] = [Joueur](repeating: Joueur(name: " "), count: 2)  //création d'un mini tableau de joueurs, pour qu'il puisse piocher de nouveau dans la pioche et pouvoir déterminer qui joue en premier
+            mini[0]=Occurence1[0]
+            mini[1]=Occurence2[0]
+            var duel : [Carte] = [Carte](repeating: Carte(numero: 0), count: 2) //création de l'endroit où mettre les cartes piochées
             duel[0]=selectionner()
             duel[1]=selectionner()
-        }
-        let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: duel)
-        let OrdreJ : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0)
-        return OrdreJ        }
 
-    else {      //cas occ==3
-        let occurence1 : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0)
-        let occurence2 : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[1], indice2: 0)
-        let occurence3 : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[2], indice2: 0)
+            while duel[0].numero==duel[1].numero{
+                duel[0]=selectionner()
+                duel[1]=selectionner()
+            }
+            let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: duel)
+            let OrdreJ : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0)
+            return OrdreJ        }
 
-        var mini2 : [Joueur] = [Joueur](repeating: Joueur(name: " "), count: 3) //création d'un mini tableau de joueurs
-        mini2[0]=occurence1[0]
-        mini2[1]=occurence2[0]
-        mini2[2]=occurence3[0]
-        var triel : [Carte] = [Carte](repeating: Carte(numero: 0), count: 3)//création de l'endroit où mettre les cartes piochées
-        triel[0]=selectionner()
-        triel[1]=selectionner()
-        triel[2]=selectionner()
+        else {      //cas occ==3
+            let occurence1 : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0)
+            let occurence2 : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[1], indice2: 0)
+            let occurence3 : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[2], indice2: 0)
 
-        while triel[0].numero==triel[1].numero && triel[0].numero==triel[2].numero && triel[1].numero==triel[2].numero{
-        triel[0]=selectionner()
-        triel[1]=selectionner()
-        triel[2]=selectionner()          } // cas où les trois cartes piochées sont égales
+            var mini2 : [Joueur] = [Joueur](repeating: Joueur(name: " "), count: 3) //création d'un mini tableau de joueurs
+            mini2[0]=occurence1[0]
+            mini2[1]=occurence2[0]
+            mini2[2]=occurence3[0]
+            var triel : [Carte] = [Carte](repeating: Carte(numero: 0), count: 3)//création de l'endroit où mettre les cartes piochées
+            triel[0]=selectionner()
+            triel[1]=selectionner()
+            triel[2]=selectionner()
 
-        while triel[0].numero==triel[1].numero || triel[0].numero==triel[2].numero || triel[1].numero==triel[2].numero{
-            if triel[0].numero==triel[1].numero{
+            while triel[0].numero==triel[1].numero && triel[0].numero==triel[2].numero && triel[1].numero==triel[2].numero{
                 triel[0]=selectionner()
-                triel[1]=selectionner()            }
-            else if triel[0].numero==triel[2].numero {
-                triel[0]=selectionner()
-                triel[2]=selectionner()            }
-            else {
                 triel[1]=selectionner()
-                triel[2]=selectionner()            }            }
+                triel[2]=selectionner()          } // cas où les trois cartes piochées sont égales
 
-        let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: triel)
-        let OrdreJ : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0) 
-        return OrdreJ
+            while triel[0].numero==triel[1].numero || triel[0].numero==triel[2].numero || triel[1].numero==triel[2].numero{
+                if triel[0].numero==triel[1].numero{
+                    triel[0]=selectionner()
+                    triel[1]=selectionner()            }
+                else if triel[0].numero==triel[2].numero {
+                    triel[0]=selectionner()
+                    triel[2]=selectionner()            }
+                else {
+                    triel[1]=selectionner()
+                    triel[2]=selectionner()            }            }
+
+            let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: triel)
+            let OrdreJ : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0) 
+            return OrdreJ
         }
     } 
 }
