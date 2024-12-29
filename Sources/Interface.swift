@@ -7,7 +7,7 @@ func AffGrille(joueur : Joueur)
             if let c : Carte = joueur.grille[i][j]
             {
                 if c.estFaceCachee{
-                    print(c.numero, terminator: " ")
+                    print("?", terminator: " ")
                 }
                 else{
                 print(c.numero, terminator: " ")
@@ -79,16 +79,17 @@ func demanderNomJoueur(i : Int) -> String
     }
     return ""
 }
-func demanderIndice() -> Int{
+func demanderIndice() -> (Int, Int){
     var isOK : Bool = false
-    var i : Int = 0
+    var i : Int = -1
+    var j : Int = -1
     while !isOK{
         print("numéro de ligne de la carte à enlever : ")
         let saisieI : Int? = Int(readLine()!)
             if let l : Int = saisieI{
                 if l < 4{
-                    i = l
                     isOK = true
+                    i = l
                 }
                 else{
                     print("le numéro de ligne ne correspond pas")
@@ -98,7 +99,24 @@ func demanderIndice() -> Int{
                 print("veuillez saisir un chiffre entre 0 et 3")
             }
     }
-    return i
+    isOK = false
+    while !isOK{
+        print("numéro de colonne de la carte à enlever : ")
+        let saisieI : Int? = Int(readLine()!)
+            if let c : Int = saisieI{
+                if c < 4{
+                    j = c
+                    isOK = true
+                }
+                else{
+                    print("le numéro de colonne ne correspond pas")
+                }
+            }
+            else{
+                print("veuillez saisir un chiffre entre 0 et 3")
+            }
+    }    
+    return (i, j)
 }
 
 func affCentre(centre: [Carte?]) {
@@ -110,16 +128,18 @@ func affCentre(centre: [Carte?]) {
         }
     }
 }
-func choisirCarteCentre(nbJoueur : Int) -> Int {
+func choisirCarteCentre(nbJoueur : Int, centre: [Carte?]) -> Int {
     var isOK : Bool = false
     var i : Int = 0
     while !isOK{
         print("Entrez l'indice de la carte que vous souhaitez récupérer :")
         let saisieI : Int? = Int(readLine()!)
             if let l : Int = saisieI{
-                if l < nbJoueur{
-                    i = l
-                    isOK = true
+                if (l < nbJoueur){
+                    if let c : Carte = centre[l]{
+                        i = l
+                        isOK = true
+                    }
                 }
                 else{
                     print("l'indice ne convient pas.")

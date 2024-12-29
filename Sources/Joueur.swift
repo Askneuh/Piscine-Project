@@ -58,6 +58,7 @@ struct Joueur : JoueurProtocol
 
 
     mutating func piocher(i: Int, j: Int) -> Carte
+    {
     /*
     Renvoie la carte situé à l'indice de ligne i et de colonne j et la supprime dans la grille
     entree :
@@ -66,16 +67,16 @@ struct Joueur : JoueurProtocol
     self.grille[i][j] : Carte : la carte situé à l'indice de ligne i et de colonne j
     Precondition : la carte ne doit pas etre deja face visible
     */
-    {   
         if let c : Carte = self.grille[i][j]
         {
-            print(c.numero)
             defer{
                 self.grille[i][j] = nil
                 self.coordCaseVide = (i, j)
             }
             return c
         }
+
+            
         else{
             //Ce cas ne devrait pas arriver
             return Carte(numero : 0)
@@ -220,12 +221,13 @@ struct Joueur : JoueurProtocol
             }
             else {
                 for n in colonneTrou...self.grille[0].count-2{
-                    self.grille[ligneTrou][n]=self.grille[ligneTrou][n+1]             }
+                    self.grille[ligneTrou][n]=self.grille[ligneTrou][n+1]             
+                }
                 self.grille[ligneTrou][self.grille.count-1]=carte
+
             }
         }
         self.coordCaseVide = (-1, -1)
     }
-    
-}
 
+}

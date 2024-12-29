@@ -42,11 +42,27 @@ struct Partie : PartieProtocol{
 
     mutating func placerAuCentre(k: Int) {
         var copieOrdrePassage: [Joueur] = self.ordrePassage
-        let ligne: Int = demanderIndice()
-        let colonne: Int = demanderIndice()
-        let carteTemp: Carte = copieOrdrePassage[k].piocher(i: ligne, j: colonne)
-        Centre[k] = carteTemp
-        self.ordrePassage = copieOrdrePassage
+        var isOK : Bool = false
+        var col : Int = 0
+        var lig : Int = 0
+        while !isOK{
+            let coord : (Int, Int) = demanderIndice()
+            let carteTemp: Carte? = copieOrdrePassage[k].grille[coord.0][coord.1]
+            if let c: Carte = carteTemp{
+                if c.estFaceCachee{ 
+                    print("ici")
+                    isOK = true
+                    col = coord.1
+                    lig = coord.0
+                }
+            }
+        }
+        let carte: Carte? = copieOrdrePassage[k].piocher(i: lig, j: col)
+        if let c: Carte = carte{
+            Centre[k] = c
+        }
+        ordrePassage = copieOrdrePassage
+        
     }
 
 

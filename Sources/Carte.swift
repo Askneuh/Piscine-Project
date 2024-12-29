@@ -1,6 +1,7 @@
 protocol CarteProtocol
 {
     var numero : Int {get}
+    mutating func retourner()
     var estFaceCachee : Bool {get set}
     init(numero : Int)
 }
@@ -11,5 +12,8 @@ struct Carte : CarteProtocol
     init(numero : Int)
     {
         self.numero = numero
+    }
+    mutating func retourner(){
+        self.estFaceCachee = false
     }
 }
