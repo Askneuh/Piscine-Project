@@ -127,7 +127,7 @@ struct Partie{
         let OrdreJ : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0)
         return OrdreJ        }
 
-    else if occ==2{
+    else if occ == 2  {
         let Occurence1 : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0) //un preimer tableau qui va mettre en premier indice le joueur qui a la carte la plus petite en premier
         let Occurence2 : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[1], indice2: 0) // un deuxième tableau qui va mettre en premier indice le joueur qui a eu la carte la plus petite en deuxième
         var mini : [Joueur] = [Joueur](repeating: Joueur(name: " "), count: 2)  //création d'un mini tableau de joueurs, pour qu'il puisse piocher de nouveau dans la pioche et pouvoir déterminer qui joue en premier
@@ -137,10 +137,13 @@ struct Partie{
         duel[0]=selectionner()
         duel[1]=selectionner()
 
-        while duel[0].numero==duel[1].numero{
+        while duel[0].numero == duel[1].numero {
+
             duel[0]=selectionner()
             duel[1]=selectionner()
+
         }
+        
         let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: duel)
         let OrdreJ : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0)
         return OrdreJ        }
