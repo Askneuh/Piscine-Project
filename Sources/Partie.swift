@@ -28,8 +28,9 @@ struct Partie : PartieProtocol{
         self.ordrePassage = [Joueur](repeating: Joueur(name: ""), count: nbJoueur)
         self.Centre = [Carte?](repeating: nil, count: nbJoueur)
         self.Paquet = paquet
-        for i in 0..<ordrePassage.count
-        {
+
+        // odrePassage est un tableau regroupant tous les joueurs dont on intialise le nom.
+        for i in 0..<ordrePassage.count        {
             var nom : String = demanderNomJoueur(i : i+1)
             ordrePassage[i] = Joueur(name: nom)
         }
@@ -201,7 +202,6 @@ struct Partie : PartieProtocol{
         // on recupère le nouveau minimum du tableau duel, et on place le joueuer correspondant au premier indice du tableau 'Indice' de duel en premier dans l'ordre de passage
         let (occ, indiceDuel) : (Int, [Int]) = occMinEtIndice(Tab: duel)
         ordrePassage = echanger2cases(tableau: ordrePassage, indice1: indice[indiceDuel[0]], indice2: 0)
-        return ordrePassage
     }
 
     // cas occ == 3
@@ -260,7 +260,6 @@ struct Partie : PartieProtocol{
 
             let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: triel)
             let OrdreJ : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0) 
-            return OrdreJ
         }
     } 
 }
