@@ -14,11 +14,10 @@ for numero in 1...10 {
 }
 var partie : PartieProtocol = Partie(nbJoueur: nbJoueur, paquet: paquet)
 partie.distributionCarte()
-for elt in partie.ordrePassage{
-    print(elt.name)
-}
 
-for h in 0...16{
+
+
+for h in 0...15{
     for i: Int in 0..<partie.ordrePassage.count {
         print("Au tour de ", partie.ordrePassage[i].name)
         print("\n")
@@ -44,5 +43,6 @@ for h in 0...16{
     }
     partie.changerOrdrePassage()
 }
+
 
 
