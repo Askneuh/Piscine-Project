@@ -5,16 +5,16 @@ protocol PartieProtocol {
     var nbJoueur : Int {get}
     var ordrePassage : [Joueur] {get set}
     var Centre : [Carte?]{get set}
-    init(nbJoueur:Int)    
-    func placerAuCentre(carte : Carte)
-    func retirerDuCentre(indice:Int)
+    init(nbJoueur:Int, paquet : [Carte?])    
+    mutating func placerAuCentre(k: Int)
+    mutating func retirerDuCentre(indice:Int)->Carte
     mutating func selectionner()->Carte
     mutating func changerOrdrePassage()
     mutating func distributionCarte()
     mutating func firstRoad()
 }
 
-struct Partie{
+struct Partie : PartieProtocol{
     
     var nbJoueur: Int
     var ordrePassage : [Joueur]     // tableau définissant l'ordre des joueurs 
@@ -28,11 +28,9 @@ struct Partie{
         self.ordrePassage = [Joueur](repeating: Joueur(name: ""), count: nbJoueur)
         self.Centre = [Carte?](repeating: nil, count: nbJoueur)
         self.Paquet = paquet
-
-        // odrePassage est un tableau regroupant tous les joueurs dont on intialise le nom.
-
-        for i in 0..<ordrePassage.count        {
-            var nom : String = demanderNomJoueur(i : i)
+        for i in 0..<ordrePassage.count
+        {
+            var nom : String = demanderNomJoueur(i : i+1)
             ordrePassage[i] = Joueur(name: nom)
         }
 
@@ -50,15 +48,30 @@ struct Partie{
 
     // lors d'un tour, un joueur selectionne une carte qu'il place dans sa grille, qui est placée dans le tableau 'Centre'
     
-    mutating func placerAuCentre(carte : Carte){
-        
-        for k: Int in 0..<ordrePassage.count{
-            let ligne : Int = 0 //demanderLigne()
-            let colonne : Int = 0 //demandeColonne() (à remplacer une fois les fonctions implémentées)
-            let carte_temp : Carte =  self.ordrePassage[k].piocher(i : ligne, j : colonne)
-            Centre[k] = carte_temp
-        }
 
+    mutating func placerAuCentre(k: Int) {
+        var copieOrdrePassage: [Joueur] = self.ordrePassage
+        var isOK : Bool = false
+        var col : Int = 0
+        var lig : Int = 0
+        while !isOK{
+            let coord : (Int, Int) = demanderIndice()
+            let carteTemp: Carte? = copieOrdrePassage[k].grille[coord.0][coord.1]
+            if let c: Carte = carteTemp{
+                if c.estFaceCachee{ 
+                    print("ici")
+                    isOK = true
+                    col = coord.1
+                    lig = coord.0
+                }
+            }
+        }
+        let carte: Carte? = copieOrdrePassage[k].piocher(i: lig, j: col)
+        if let c: Carte = carte{
+            Centre[k] = c
+        }
+        ordrePassage = copieOrdrePassage
+        
     }
 
 
@@ -96,27 +109,17 @@ struct Partie{
 
     }
 
-    //modifie l'ordre de passage des joueurs
-
-    mutating func changerOrdrePassage()->[Joueur]{
-
+    mutating func changerOrdrePassage(){
         let dernierJoueur : Joueur = ordrePassage[0]
 
         for i in 0..<ordrePassage.count-1{
-            ordrePassage[i]=ordrePassage[i+1]      
-        }
-            
-        ordrePassage[ordrePassage.count-1]=dernierJoueur
-        return ordrePassage
-
+            ordrePassage[i]=ordrePassage[i+1]      }
+            ordrePassage[ordrePassage.count-1]=dernierJoueur
     }
 
-
-    // fonctions nécéssaires à la fonction du cas de base
-
-    // prenant un tableau de carte (le tableau Centre), il permet d'avoir des informations pour le cas de base 
-    
-    func occMinEtIndice(Tab : [Carte?])->(occurence : Int, indice : [Int]){
+    //prenant un tableau de carte (le tableau Centre), il permet d'avoir des informations pour le cas de base 
+    //précondition : le tableau est rempli
+    private func occMinEtIndice(Tab : [Carte?])->(occurence : Int, indice : [Int]){
 
         let TabSansNul : [Carte] = Tab.compactMap { $0 } // permet de créer un tableau fait uniquement d'entier
 
@@ -147,8 +150,7 @@ struct Partie{
 
     }
 
-    func echanger2cases (tableau : [Joueur], indice1: Int, indice2: Int)->[Joueur]{
-
+    private func echanger2cases (tableau : [Joueur], indice1: Int, indice2: Int)->[Joueur]{
         var tableauModifie : [Joueur] = tableau
         let temp : Joueur = tableau[indice1]
         tableauModifie[indice1] = tableauModifie[indice2]
@@ -160,7 +162,7 @@ struct Partie{
     //cas de base, permet de determiner l'odre du / des premiers joueurs
     mutating func firstRoad(){
         
-    let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: Centre)
+        let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: Centre)
 
     // si la carte ayant la plus petite valeur n'apparaît qu'une seule fois, le joueur la possédant joue en premier.
     
@@ -245,9 +247,20 @@ struct Partie{
             }            
         }
 
-        let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: triel)
-        let OrdreJ : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0) 
-        return OrdreJ
+            while triel[0].numero==triel[1].numero || triel[0].numero==triel[2].numero || triel[1].numero==triel[2].numero{
+                if triel[0].numero==triel[1].numero{
+                    triel[0]=selectionner()
+                    triel[1]=selectionner()            }
+                else if triel[0].numero==triel[2].numero {
+                    triel[0]=selectionner()
+                    triel[2]=selectionner()            }
+                else {
+                    triel[1]=selectionner()
+                    triel[2]=selectionner()            }            }
+
+            let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: triel)
+            let OrdreJ : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0) 
+            return OrdreJ
         }
     } 
 }
