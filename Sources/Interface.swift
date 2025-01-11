@@ -147,7 +147,8 @@ func affCentre(centre: [Carte?]) {
     }
 }
 func choisirCarteCentre(nbJoueur : Int, centre: [Carte?]) -> Int {
-    
+//Fonction qui demande a l'utilisateur de choisir l'indice de la carte du centre qu'il souhaite récupérer.
+//La fonction demande en boucle jusqu'a ce que l'indice rentré par l'utilisateur soit correct.
     var isOK : Bool = false
     var i : Int = 0
     while !isOK{
@@ -159,18 +160,27 @@ func choisirCarteCentre(nbJoueur : Int, centre: [Carte?]) -> Int {
                         i = l
                         isOK = true
                     }
+                
+                    else{
+                        print("La carte a cet indice n'est plus disponible")
+                        print("\n")
+                    }
                 }
                 else{
-                    print("l'indice ne convient pas.")
+                    print("L'indice est trop grand")
+                    print("\n")
                 }
             }
             else{
-                print("veuillez saisir un chiffre valide")
+                print("Veuillez saisir un chiffre valide")
+                print("\n")
             }
     }
     return i
 }
 func demanderDirection(joueur: Joueur) -> Direction {
+//Fonction qui demande à l'utilisateur la direction dans laquelle il souhaite intégrer sa carte dans sa grille
+//La fonction demande en boucle la direction jusqu'a ce qu'elle soit conforme aux preconditions de la fonction deplacer.
     var isOk : Bool = false
     var direction_r : Direction = .Haut
     while !isOk {

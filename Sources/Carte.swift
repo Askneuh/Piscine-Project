@@ -7,13 +7,13 @@ protocol CarteProtocol
 }
 struct Carte : CarteProtocol
 {
-    var numero: Int = 0
-    var estFaceCachee: Bool = true
+    public var numero: Int = 0
+    public var estFaceCachee: Bool = true
     init(numero : Int)
     {
         self.numero = numero
     }
-    mutating func retourner(){
+    public mutating func retourner(){
         self.estFaceCachee = false
     }
 }

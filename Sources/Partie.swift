@@ -60,7 +60,6 @@ struct Partie : PartieProtocol{
             let carteTemp: Carte? = copieOrdrePassage[k].grille[coord.0][coord.1]
             if let c: Carte = carteTemp{
                 if c.estFaceCachee{ 
-                    print("ici")
                     isOK = true
                     col = coord.1
                     lig = coord.0
