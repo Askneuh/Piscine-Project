@@ -25,7 +25,7 @@ protocol JoueurProtocol
     //Calcule le score du joueur à partir de sa grille en respectant les règles du jeu
     //Precondition : la partie est terminée
     //Precondition : La grille du joueur est remplie et toutes les cartes sont retournées.
-    var Score : Int {get}
+    var score : Int {get}
     //Vérifie si la grille est complète ou non.
     var estComplet: Bool {get}
     //Coordonnées de la case vide
@@ -137,7 +137,7 @@ struct Joueur : JoueurProtocol
         }
         return res    
     }
-    public var Score: Int
+    public var score: Int
         /*
         Calcule la somme des cartes qui n'ont pas de carte voisine ayant la meme valeur.
         */ 
