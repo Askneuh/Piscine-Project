@@ -1,20 +1,42 @@
 protocol JoueurProtocol
 {
+    //Crée une instance de joueur dont le nom est name, avec une grille dont toutes les cases sont des cartes de valeur 0 face cachée.
     init(name : String)
+    //nom du joueur
     var name : String {get set}
-    var grille : [[Carte?]] {get set}
+    // Représente la grille de jeu du joueur
+    var grille : [[Carte?]] {get set} 
+    //Distribue aléatoirement, dans les cases de la grille du joueur, des cartes à partir d'un paquet de carte [Carte?] donné en paramètre
+    //Precondition : la grille doit être telle qu'elle a été initialisée a sa création.
     mutating func distribue(paquet : inout [Carte?]) -> [Carte?]
+    // Renvoie la carte situé dans la case d'indice i et j donnés en paramètres et la remplace par la valeur nil
+    //Precondition : 0 <= i, j <= grille.count (en sachant que la grille est un carré).
+    //Precondition : la grille doit être remplie à l'appel de cette fonction
+    //Precondition : une carte ne peut etre piochée que si elle est face cachée : carte.estFaceCachée == True
     mutating func piocher(i : Int, j : Int) -> Carte
+    //Insere la carte donnée en paramètre en fonction de la Direction aussi donnée en paramètre.
+    //Les paramètres i et j représentent les coordonnées de ligne et de colonne de la case vide
+    //Precondition : La grille doit avoir 1 et 1 seul élément nil.
+    //Precondition : i == 0 => deplacement != Bas
+    //Precondition : i == len(grille) - 1 => deplacement != Haut
+    //Precondition : j == 0 => deplacement != Droite
+    //Precondition : j == len(grille) - 1 => deplacement != Gauche
     mutating func deplacer(deplacement : Direction, carte : Carte, i : Int, j : Int)
-    func calculScore() -> Int
-    func estComplet() -> Bool
+    //Calcule le score du joueur à partir de sa grille en respectant les règles du jeu
+    //Precondition : la partie est terminée
+    //Precondition : La grille du joueur est remplie et toutes les cartes sont retournées.
+    var score : Int {get}
+    //Vérifie si la grille est complète ou non.
+    var estComplet: Bool {get}
+    //Coordonnées de la case vide
+    //Il ne peut y avoir qu'une seule case vide à la fois
     var coordCaseVide : (Int, Int) {get}
 }
 struct Joueur : JoueurProtocol
 {
-    var coordCaseVide: (Int, Int)
-    var name : String = " "
-    var grille :[[Carte?]] = [[Carte?]](repeating: [Carte?](repeating: Carte(numero: 0), count: 4), count: 4)
+    public var coordCaseVide: (Int, Int)
+    public var name : String = " "
+    public var grille :[[Carte?]] = [[Carte?]](repeating: [Carte?](repeating: Carte(numero: 0), count: 4), count: 4)
     init(name : String)
     {
         self.name = name
@@ -24,7 +46,7 @@ struct Joueur : JoueurProtocol
 
 
 
-    mutating func distribue(paquet : inout [Carte?]) -> [Carte?]
+    public mutating func distribue(paquet : inout [Carte?]) -> [Carte?]
     /*
     Distribue les cartes aléatoirement à la grille
     Entree : 
@@ -33,7 +55,10 @@ struct Joueur : JoueurProtocol
     grille : [[Carte]] la grille avec les cartes aléatoirement distribuées
     paquet : [Carte?] le paquet de carte sans les cartes qui ont été distribué dans la grille du joueur"
     */
-    {    
+    {
+    guard(self.estComplet) else{
+            fatalError("La grille doit être pleine")
+        }    
         for i in 0...self.grille.count-1
         
         {
@@ -57,7 +82,7 @@ struct Joueur : JoueurProtocol
     }
 
 
-    mutating func piocher(i: Int, j: Int) -> Carte
+    public mutating func piocher(i: Int, j: Int) -> Carte
     {
     /*
     Renvoie la carte situé à l'indice de ligne i et de colonne j et la supprime dans la grille
@@ -66,7 +91,11 @@ struct Joueur : JoueurProtocol
     sortie : 
     self.grille[i][j] : Carte : la carte situé à l'indice de ligne i et de colonne j
     Precondition : la carte ne doit pas etre deja face visible
+    Precondition : la grille doit être pleine
     */
+        guard(self.estComplet) else {
+            fatalError("La grille doit être pleine")
+        }
         if let c : Carte = self.grille[i][j]
         {
             defer{
@@ -84,7 +113,7 @@ struct Joueur : JoueurProtocol
     }
 
 
-    func estComplet() -> Bool
+    public var estComplet: Bool
     /*
     Renvoie true si chacun des éléments de la grille est une carte, false s'il y a un nil dans la grille
     Sortie :
@@ -108,12 +137,11 @@ struct Joueur : JoueurProtocol
         }
         return res    
     }
-    func calculScore() -> Int
+    public var score: Int
         /*
-        Calcul la somme des cartes qui n'ont pas de carte voisine ayant la meme valeur.
-        Sortie :
+        Calcule la somme des cartes qui n'ont pas de carte voisine ayant la meme valeur.
         */ 
-        {
+    {
             var somme : Int = 0
         for i in 0...self.grille.count-1
         {
@@ -174,7 +202,17 @@ struct Joueur : JoueurProtocol
         return somme     
     }
         
-    mutating func deplacer(deplacement : Direction, carte : Carte,i : Int, j : Int){
+    public mutating func deplacer(deplacement : Direction, carte : Carte,i : Int, j : Int){
+    //Insere la carte donnée en paramètre en fonction de la Direction aussi donnée en paramètre.
+    //Les paramètres i et j représentent les coordonnées de ligne et de colonne de la case vide
+    //Precondition : La grille doit avoir 1 et 1 seul élément nil.
+    //Precondition : i == 0 => deplacement != Bas
+    //Precondition : i == len(grille) - 1 => deplacement != Haut
+    //Precondition : j == 0 => deplacement != Droite
+    //Precondition : j == len(grille) - 1 => deplacement != Gauche
+        guard(!(self.estComplet))else{
+            fatalError("La grille doit avoir un élément vide")
+        }
         let ligneTrou : Int = i // nom de la variable utilisée pour enlever une carte de la grille
         let colonneTrou : Int = j
 

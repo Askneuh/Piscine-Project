@@ -1,4 +1,6 @@
 func AffGrille(joueur : Joueur)
+//Fonction d'affichage de la grille d'un joueur passé en paramètre
+//Parcours chaque carte de la grille, si la carte est face cachée, affiche "?", sinon, affiche la valeur de la carte
 {
     for i in 0...joueur.grille.count-1
     {
@@ -23,6 +25,8 @@ func AffGrille(joueur : Joueur)
 }
 
 func affPaquet(paquet : [Carte?]) -> [Int]
+//Fonction d'affichage du paquet.
+//Ne sers pas dans le main, mais a permis de vérifier la création du paquet
 {
     var res : [Int] = [Int](repeating: 0, count: 100)
     for i in  0..<paquet.count{
@@ -39,6 +43,10 @@ func affPaquet(paquet : [Carte?]) -> [Int]
 }
 
 func demanderNbJoueur() -> Int
+//Fonction demandant à l'utilisateur d'insérer le nombre de joueur qu'il souhaite faire participer
+//La fonction vérifie que l'input soit bien un nombre entier compris entre 2 et 4, afin que le retour de cette fonction
+//soit conforme aux préconditions données par les règles du jeu
+//La fonction demande une entrée clavier en boucle jusqu'a obtenir une entrée correcte.
 {
     var commencerPartie : Bool = false
     var nbJoueur : Int = 0
@@ -70,6 +78,10 @@ func demanderNbJoueur() -> Int
 }
 
 func demanderNomJoueur(i : Int) -> String
+//Fonction demandant à l'utilisateur le nom du joueur créé en i-ième position par le jeu
+//La fonction demande une entrée clavier à l'utilisateur et la transforme en type String
+//Deux joueurs peuvent avoir le même nom
+//La fonction demande une entrée clavier en boucle jusqu'a obtenir une entrée correcte.
 {
     print("Nom du joueur", i, ": ")
     let nom: String? = String(readLine()!)
@@ -80,6 +92,10 @@ func demanderNomJoueur(i : Int) -> String
     return ""
 }
 func demanderIndice() -> (Int, Int){
+//Fonction qui demande à l'utilisateur les coordonnées d'une carte à enlever.
+//Elle vérifie que les indices entrés par l'utilisateur soit un nombre entier correspondent bien à une case de la grille
+//La fonction demande une entrée clavier en boucle jusqu'a obtenir une entrée correcte.
+//La fonction renvoie un tuple d'entier correspondant respectivement aux indices de ligne et de colonne.
     var isOK : Bool = false
     var i : Int = -1
     var j : Int = -1
@@ -120,6 +136,8 @@ func demanderIndice() -> (Int, Int){
 }
 
 func affCentre(centre: [Carte?]) {
+//Fonction qui permet l'affichage du centre du jeu
+//Pour chaque case du centre, si la case est une carte, la fonction affiche le numéro de la carte, sinon, la fonction affiche "/"
     for elt in centre {
         if let c: Carte = elt {
             print(c.numero, terminator: " ")
@@ -129,6 +147,8 @@ func affCentre(centre: [Carte?]) {
     }
 }
 func choisirCarteCentre(nbJoueur : Int, centre: [Carte?]) -> Int {
+//Fonction qui demande a l'utilisateur de choisir l'indice de la carte du centre qu'il souhaite récupérer.
+//La fonction demande en boucle jusqu'a ce que l'indice rentré par l'utilisateur soit correct.
     var isOK : Bool = false
     var i : Int = 0
     while !isOK{
@@ -140,18 +160,27 @@ func choisirCarteCentre(nbJoueur : Int, centre: [Carte?]) -> Int {
                         i = l
                         isOK = true
                     }
+                
+                    else{
+                        print("La carte a cet indice n'est plus disponible")
+                        print("\n")
+                    }
                 }
                 else{
-                    print("l'indice ne convient pas.")
+                    print("L'indice est trop grand")
+                    print("\n")
                 }
             }
             else{
-                print("veuillez saisir un chiffre valide")
+                print("Veuillez saisir un chiffre valide")
+                print("\n")
             }
     }
     return i
 }
 func demanderDirection(joueur: Joueur) -> Direction {
+//Fonction qui demande à l'utilisateur la direction dans laquelle il souhaite intégrer sa carte dans sa grille
+//La fonction demande en boucle la direction jusqu'a ce qu'elle soit conforme aux preconditions de la fonction deplacer.
     var isOk : Bool = false
     var direction_r : Direction = .Haut
     while !isOk {

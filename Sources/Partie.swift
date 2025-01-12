@@ -12,6 +12,9 @@ protocol PartieProtocol {
     mutating func changerOrdrePassage()
     mutating func distributionCarte()
     mutating func firstRoad()
+    mutating func jouerPremierTour()
+    mutating func jouerTour()
+    func resultat()
 }
 
 struct Partie : PartieProtocol{
@@ -60,7 +63,6 @@ struct Partie : PartieProtocol{
             let carteTemp: Carte? = copieOrdrePassage[k].grille[coord.0][coord.1]
             if let c: Carte = carteTemp{
                 if c.estFaceCachee{ 
-                    print("ici")
                     isOK = true
                     col = coord.1
                     lig = coord.0
@@ -261,5 +263,68 @@ struct Partie : PartieProtocol{
             let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: triel)
             let OrdreJ : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0) 
         }
-    } 
+    }
+    mutating func jouerPremierTour()
+    {
+        for i: Int in 0..<self.ordrePassage.count {
+            print("\n")
+            print("Au tour de ", self.ordrePassage[i].name)
+            AffGrille(joueur: self.ordrePassage[i])
+            self.placerAuCentre(k: i)
+            AffGrille(joueur: self.ordrePassage[i])
+        }
+        self.firstRoad()
+
+        for k: Int in 0..<self.ordrePassage.count {
+            print("Au tour de ", self.ordrePassage[k].name)
+            print("\n")
+            AffGrille(joueur: self.ordrePassage[k])
+            print("\n") 
+            affCentre(centre: self.Centre)
+            var i: Int = choisirCarteCentre(nbJoueur: self.nbJoueur, centre: self.Centre)
+            var carte : Carte = self.retirerDuCentre(indice: i)
+            carte.retourner()
+            while !(self.ordrePassage[k].estComplet){
+                var dir : Direction = demanderDirection(joueur: self.ordrePassage[k])
+                self.ordrePassage[k].deplacer(deplacement: dir, carte: carte, i: self.ordrePassage[k].coordCaseVide.0, j: self.ordrePassage[k].coordCaseVide.1)
+                AffGrille(joueur: self.ordrePassage[k])
+            }
+        }
+        self.changerOrdrePassage()
+    }
+    mutating func jouerTour(){
+        for i: Int in 0..<self.ordrePassage.count {
+        print("\n")
+        print("Au tour de ", self.ordrePassage[i].name)
+        print("\n")
+        AffGrille(joueur: self.ordrePassage[i])
+        self.placerAuCentre(k: i)
+        AffGrille(joueur: self.ordrePassage[i])
+    }
+    for k: Int in 0..<self.ordrePassage.count {
+        print("\n")
+        print("Au tour de ", self.ordrePassage[k].name)
+        print("\n")
+        AffGrille(joueur: self.ordrePassage[k])
+        print("\n")
+        affCentre(centre: self.Centre)
+        var i: Int = choisirCarteCentre(nbJoueur: self.nbJoueur, centre: self.Centre)
+        var carte : Carte = self.retirerDuCentre(indice: i)
+        carte.retourner()
+        while !(self.ordrePassage[k].estComplet){
+            var dir : Direction = demanderDirection(joueur: self.ordrePassage[k])
+            self.ordrePassage[k].deplacer(deplacement: dir, carte: carte, i: self.ordrePassage[k].coordCaseVide.0, j: self.ordrePassage[k].coordCaseVide.1)
+            AffGrille(joueur: self.ordrePassage[k])
+        }
+    }
+    self.changerOrdrePassage()
+    }
+    func resultat(){
+        var joueurs = self.ordrePassage
+        joueurs.sorted {$0.score < $1.score}
+        print("Classement :")
+        for joueur in joueurs{
+            print(joueur.name," : " ,joueur.score)
+        }
+    }
 }
