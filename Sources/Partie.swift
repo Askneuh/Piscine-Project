@@ -164,8 +164,9 @@ struct Partie : PartieProtocol{
 
     //cas de base, permet de determiner l'odre du / des premiers joueurs
     mutating func firstRoad(){
+        let copieCentre : [Carte?] = Centre
         
-        let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: Centre)
+        let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: copieCentre)
 
     // si la carte ayant la plus petite valeur n'apparaît qu'une seule fois, le joueur la possédant joue en premier.
     
@@ -202,12 +203,14 @@ struct Partie : PartieProtocol{
         }
 
         // on recupère le nouveau minimum du tableau duel, et on place le joueuer correspondant au premier indice du tableau 'Indice' de duel en premier dans l'ordre de passage
-        let (occ, indiceDuel) : (Int, [Int]) = occMinEtIndice(Tab: duel)
+        let (_, indiceDuel) : (Int, [Int]) = occMinEtIndice(Tab: duel)
         ordrePassage = echanger2cases(tableau: ordrePassage, indice1: indice[indiceDuel[0]], indice2: 0)
     }
 
-    // cas occ == 3
-    else {
+    // si la carte ayant la plus petite valeur apparaît tois fois, les joueurs la possédant piochent de nouveux jusqu'à ce que les cartes repiochées soient toutes différentes et ainsi, la joueur ayant la plus petite carte des deux jouera en premier.
+
+
+    else if occ == 3 {
 
         // même principe que dans le cas 2, on crer un tableau mini où l'on stocke les joueuers ayant piochés les cartes à valeurs minimales
         
@@ -230,38 +233,101 @@ struct Partie : PartieProtocol{
             }       
         }
 
-        while triel[0].numero==triel[1].numero || triel[0].numero==triel[2].numero || triel[1].numero==triel[2].numero{
+        while triel[0].numero == triel[1].numero || triel[0].numero == triel[2].numero || triel[1].numero == triel[2].numero {                     // cas où deux cartes pichés sont égales 
+            let T0 : Carte = triel[0]                       // il est nécessaire de faire des copies des cartes car si triel[0].numero == triel[1].numero, la carte triel[1] est repiochée, et si triel[1] == triel[2], triel[1] étant déjà modifiée, ça n'engendrera pas les modifications souhaitées.
+            let T1 : Carte = triel[1]
+            let T2 : Carte = triel[2]
             
-            if triel[0].numero==triel[1].numero{
+            if T0.numero == T1.numero {
                 triel[0]=selectionner()
                 triel[1]=selectionner()            
             }
 
-            else if triel[0].numero == triel[2].numero {
+            else if T0.numero == T2.numero {
 
                 triel[0]=selectionner()
                 triel[2]=selectionner()            
             }
 
-            else {
+            else if T1.numero == T2.numero {
                 triel[1]=selectionner()
                 triel[2]=selectionner()            
-            }            
+            }
+
         }
 
-            while triel[0].numero==triel[1].numero || triel[0].numero==triel[2].numero || triel[1].numero==triel[2].numero{
-                if triel[0].numero==triel[1].numero{
-                    triel[0]=selectionner()
-                    triel[1]=selectionner()            }
-                else if triel[0].numero==triel[2].numero {
-                    triel[0]=selectionner()
-                    triel[2]=selectionner()            }
-                else {
-                    triel[1]=selectionner()
-                    triel[2]=selectionner()            }            }
+            let (_, indiceTriel) : (Int, [Int]) = occMinEtIndice(Tab: triel)
+            ordrePassage = echanger2cases(tableau: ordrePassage, indice1: indice[indiceTriel[0]], indice2: 0) 
+        }
 
-            let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: triel)
-            let OrdreJ : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0) 
+        // cas où les quatre joueurs ont la même carte
+
+        else {
+
+            var mini : [Joueur] = [Joueur](repeating: Joueur(name: " "), count: occ)         // création d'un mini tableau pour les joueuers ayant les cartes à valeur minimales
+        
+            for i in 0...mini.count-1{
+                mini[i] = ordrePassage[indice[i]]
+            }
+
+            var quat : [Carte] = [Carte](repeating: Carte(numero: 0), count: occ)          // / tableau où apparaît la carte repiochée de chaque joueur de 'mini'
+            
+            for i in 1...mini.count-1{
+                quat[i] = selectionner()
+            }
+
+            while quat[0].numero == quat[1].numero && quat[0].numero == quat[2].numero && quat[0].numero == quat[3].numero && quat[1].numero == quat[2].numero && quat[1].numero == quat[3].numero && quat[2].numero == quat[3].numero {              // cas où les trois cartes piochées sont égales
+                
+                for i in 0...mini.count-1{
+                    quat[i]=selectionner()
+                }       
+            }
+
+            while quat[0].numero == quat[1].numero || quat[0].numero == quat[2].numero || quat[0].numero == quat[3].numero || quat[1].numero == quat[2].numero || quat[1].numero == quat[3].numero || quat[2].numero == quat[3].numero {                     // cas où deux cartes pichés sont égales 
+                let T0 : Carte = quat[0]                       // il est nécessaire de faire des copies des cartes car si quat[0].numero == quat[1].numero, la carte quat[1] est repiochée, et si quat[1] == quat[2], quat[1] étant déjà modifiée, ça n'engendrera pas les modifications souhaitées.
+                let T1 : Carte = quat[1]
+                let T2 : Carte = quat[2]
+                let T3 : Carte = quat[3]
+                
+                if T0.numero == T1.numero {
+                    quat[0]=selectionner()
+                    quat[1]=selectionner()            
+                }
+
+                else if T0.numero == T2.numero {
+
+                    quat[0]=selectionner()
+                    quat[2]=selectionner()            
+                }
+
+                else if T0.numero == T3.numero {
+
+                    quat[0]=selectionner()
+                    quat[3]=selectionner()            
+                }
+
+                else if T1.numero == T2.numero {
+                    quat[1]=selectionner()
+                    quat[2]=selectionner()            
+                }
+
+                else if T1.numero == T3.numero {
+
+                    quat[1]=selectionner()
+                    quat[3]=selectionner()            
+                }
+
+                else if T2.numero == T3.numero {
+
+                    quat[2]=selectionner()
+                    quat[3]=selectionner()            
+                }
+
+            }
+
+                let (_, indicequat) : (Int, [Int]) = occMinEtIndice(Tab: quat)
+                ordrePassage = echanger2cases(tableau: ordrePassage, indice1: indice[indicequat[0]], indice2: 0) 
+
         }
     }
     mutating func jouerPremierTour()
