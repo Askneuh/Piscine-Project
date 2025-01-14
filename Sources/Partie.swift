@@ -162,11 +162,10 @@ struct Partie : PartieProtocol{
 
     }
 
-    //cas de base, permet de determiner l'odre du premier joueur
+    //cas de base, permet de determiner l'odre du / des premiers joueurs
     mutating func firstRoad(){
-
-        let copieCentre : [Carte?] = Centre      
-        let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: copieCentre)
+        
+        let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: Centre)
 
     // si la carte ayant la plus petite valeur n'apparaît qu'une seule fois, le joueur la possédant joue en premier.
     
@@ -203,13 +202,12 @@ struct Partie : PartieProtocol{
         }
 
         // on recupère le nouveau minimum du tableau duel, et on place le joueuer correspondant au premier indice du tableau 'Indice' de duel en premier dans l'ordre de passage
-        let (_, indiceDuel) : (Int, [Int]) = occMinEtIndice(Tab: duel)
+        let (occ, indiceDuel) : (Int, [Int]) = occMinEtIndice(Tab: duel)
         ordrePassage = echanger2cases(tableau: ordrePassage, indice1: indice[indiceDuel[0]], indice2: 0)
     }
 
-    // si la carte ayant la plus petite valeur apparaît tois fois, les joueurs la possédant piochent de nouveux jusqu'à ce que les cartes repiochées soient toutes différentes et ainsi, la joueur ayant la plus petite carte des deux jouera en premier.
-
-    else if occ == 3 {
+    // cas occ == 3
+    else {
 
         // même principe que dans le cas 2, on crer un tableau mini où l'on stocke les joueuers ayant piochés les cartes à valeurs minimales
         
@@ -232,8 +230,8 @@ struct Partie : PartieProtocol{
             }       
         }
 
-        while triel[0].numero == triel[1].numero || triel[0].numero == triel[2].numero || triel[1].numero == triel[2].numero {                     // cas où deux cartes pichés sont égales 
-    
+        while triel[0].numero==triel[1].numero || triel[0].numero==triel[2].numero || triel[1].numero==triel[2].numero{
+            
             if triel[0].numero==triel[1].numero{
                 triel[0]=selectionner()
                 triel[1]=selectionner()            
