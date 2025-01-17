@@ -5,15 +5,15 @@ protocol JoueurProtocol
     //nom du joueur
     var name : String {get set}
     // Représente la grille de jeu du joueur
-    var grille : [[Carte?]] {get set} 
+    var grille : [[CarteProtocol?]] {get set} 
     //Distribue aléatoirement, dans les cases de la grille du joueur, des cartes à partir d'un paquet de carte [Carte?] donné en paramètre
     //Precondition : la grille doit être telle qu'elle a été initialisée a sa création.
-    mutating func distribue(paquet : inout [Carte?]) -> [Carte?]
+    mutating func distribue(paquet : inout [CarteProtocol?]) -> [CarteProtocol?]
     // Renvoie la carte situé dans la case d'indice i et j donnés en paramètres et la remplace par la valeur nil
     //Precondition : 0 <= i, j <= grille.count (en sachant que la grille est un carré).
     //Precondition : la grille doit être remplie à l'appel de cette fonction
     //Precondition : une carte ne peut etre piochée que si elle est face cachée : carte.estFaceCachée == True
-    mutating func piocher(i : Int, j : Int) -> Carte
+    mutating func piocher(i : Int, j : Int) -> CarteProtocol
     //Insere la carte donnée en paramètre en fonction de la Direction aussi donnée en paramètre.
     //Les paramètres i et j représentent les coordonnées de ligne et de colonne de la case vide
     //Precondition : La grille doit avoir 1 et 1 seul élément nil.
@@ -21,7 +21,7 @@ protocol JoueurProtocol
     //Precondition : i == len(grille) - 1 => deplacement != Haut
     //Precondition : j == 0 => deplacement != Droite
     //Precondition : j == len(grille) - 1 => deplacement != Gauche
-    mutating func deplacer(deplacement : Direction, carte : Carte, i : Int, j : Int)
+    mutating func deplacer(deplacement : Direction, carte : CarteProtocol, i : Int, j : Int)
     //Calcule le score du joueur à partir de sa grille en respectant les règles du jeu
     //Precondition : la partie est terminée
     //Precondition : La grille du joueur est remplie et toutes les cartes sont retournées.
@@ -36,17 +36,18 @@ struct Joueur : JoueurProtocol
 {
     public var coordCaseVide: (Int, Int)
     public var name : String = " "
-    public var grille :[[Carte?]] = [[Carte?]](repeating: [Carte?](repeating: Carte(numero: 0), count: 4), count: 4)
+    // METTRE LA GRILLE EN PRIVATE (et faire un subscript)
+    public var grille :[[CarteProtocol?]] = [[CarteProtocol?]](repeating: [CarteProtocol?](repeating: Carte(numero: 0), count: 4), count: 4)
     init(name : String)
     {
         self.name = name
-        self.grille = [[Carte?]](repeating: [Carte?](repeating: Carte(numero: 0), count: 4), count: 4)
+        self.grille = [[CarteProtocol?]](repeating: [CarteProtocol?](repeating: Carte(numero: 0), count: 4), count: 4)
         self.coordCaseVide = (-1, -1)
     }
 
 
 
-    public mutating func distribue(paquet : inout [Carte?]) -> [Carte?]
+    public mutating func distribue(paquet : inout [CarteProtocol?]) -> [CarteProtocol?]
     /*
     Distribue les cartes aléatoirement à la grille
     Entree : 
@@ -71,7 +72,7 @@ struct Joueur : JoueurProtocol
                     }
                 
                 
-                if let c1 : Carte = paquet[randomInt]
+                if let c1 : CarteProtocol = paquet[randomInt]
                 { 
                     self.grille[i][j] = c1
                     paquet[randomInt] = nil
@@ -82,7 +83,7 @@ struct Joueur : JoueurProtocol
     }
 
 
-    public mutating func piocher(i: Int, j: Int) -> Carte
+    public mutating func piocher(i: Int, j: Int) -> CarteProtocol
     {
     /*
     Renvoie la carte situé à l'indice de ligne i et de colonne j et la supprime dans la grille
@@ -96,7 +97,7 @@ struct Joueur : JoueurProtocol
         guard(self.estComplet) else {
             fatalError("La grille doit être pleine")
         }
-        if let c : Carte = self.grille[i][j]
+        if let c : CarteProtocol = self.grille[i][j]
         {
             defer{
                 self.grille[i][j] = nil
@@ -148,12 +149,12 @@ struct Joueur : JoueurProtocol
                 for j in 0...self.grille[i].count-1
                 {
                     var voisinDistinct: Bool = true
-                    if let c : Carte = self.grille[i][j]
+                    if let c : CarteProtocol = self.grille[i][j]
                     {
                         //Verification du voisin du haut
                         if i > 0 
                         {
-                            if let ch : Carte = self.grille[i - 1][j]
+                            if let ch : CarteProtocol = self.grille[i - 1][j]
                             {
                                 if ch.numero == c.numero{
                                     voisinDistinct = false
@@ -164,7 +165,7 @@ struct Joueur : JoueurProtocol
                         //Verification du voisin du bas
                         if i < self.grille.count-1
                         {
-                            if let cb : Carte = self.grille[i + 1][j]
+                            if let cb : CarteProtocol = self.grille[i + 1][j]
                             {
                                 if cb.numero == c.numero{
                                     voisinDistinct = false
@@ -174,7 +175,7 @@ struct Joueur : JoueurProtocol
                         //Verification du voisin de gauche
                         if j > 0
                         {
-                            if let cg : Carte = self.grille[i][j - 1]
+                            if let cg : CarteProtocol = self.grille[i][j - 1]
                             {
                                 if cg.numero == c.numero{
                                     voisinDistinct = false
@@ -184,7 +185,7 @@ struct Joueur : JoueurProtocol
                         //verification du voisin de droite 
                         if j < self.grille[i].count-1
                         {
-                            if let cd : Carte = self.grille[i][j+1]
+                            if let cd : CarteProtocol = self.grille[i][j+1]
                             {
                                 if cd.numero == c.numero{
                                     voisinDistinct = false
@@ -202,7 +203,7 @@ struct Joueur : JoueurProtocol
         return somme     
     }
         
-    public mutating func deplacer(deplacement : Direction, carte : Carte,i : Int, j : Int){
+    public mutating func deplacer(deplacement : Direction, carte : CarteProtocol,i : Int, j : Int){
     //Insere la carte donnée en paramètre en fonction de la Direction aussi donnée en paramètre.
     //Les paramètres i et j représentent les coordonnées de ligne et de colonne de la case vide
     //Precondition : La grille doit avoir 1 et 1 seul élément nil.

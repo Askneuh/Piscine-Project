@@ -1,12 +1,12 @@
-func AffGrille(joueur : Joueur)
+func AffGrille(joueur : JoueurProtocol)
 //Fonction d'affichage de la grille d'un joueur passé en paramètre
 //Parcours chaque carte de la grille, si la carte est face cachée, affiche "?", sinon, affiche la valeur de la carte
 {
-    for i in 0...joueur.grille.count-1
+    for i: Int in 0...joueur.grille.count-1
     {
-        for j in 0...joueur.grille[0].count-1
+        for j: Int in 0...joueur.grille[0].count-1
         {
-            if let c : Carte = joueur.grille[i][j]
+            if let c : CarteProtocol = joueur.grille[i][j]
             {
                 if c.estFaceCachee{
                     print("?", terminator: " ")
@@ -24,13 +24,13 @@ func AffGrille(joueur : Joueur)
     }
 }
 
-func affPaquet(paquet : [Carte?]) -> [Int]
+func affPaquet(paquet : [CarteProtocol?]) -> [Int]
 //Fonction d'affichage du paquet.
 //Ne sers pas dans le main, mais a permis de vérifier la création du paquet
 {
     var res : [Int] = [Int](repeating: 0, count: 100)
-    for i in  0..<paquet.count{
-        if let carte : Carte = paquet[i]
+    for i: Int in  0..<paquet.count{
+        if let carte : CarteProtocol = paquet[i]
         {
             res[i] = carte.numero
         }
@@ -103,7 +103,7 @@ func demanderIndice() -> (Int, Int){
         print("numéro de ligne de la carte à enlever : ")
         let saisieI : Int? = Int(readLine()!)
             if let l : Int = saisieI{
-                if l < 4{
+                if l < 4 && l >= 0{
                     isOK = true
                     i = l
                 }
@@ -120,7 +120,7 @@ func demanderIndice() -> (Int, Int){
         print("numéro de colonne de la carte à enlever : ")
         let saisieI : Int? = Int(readLine()!)
             if let c : Int = saisieI{
-                if c < 4{
+                if c < 4 && c >= 0{
                     j = c
                     isOK = true
                 }
@@ -135,18 +135,18 @@ func demanderIndice() -> (Int, Int){
     return (i, j)
 }
 
-func affCentre(centre: [Carte?]) {
+func affCentre(centre: [CarteProtocol?]) {
 //Fonction qui permet l'affichage du centre du jeu
 //Pour chaque case du centre, si la case est une carte, la fonction affiche le numéro de la carte, sinon, la fonction affiche "/"
-    for elt in centre {
-        if let c: Carte = elt {
+    for elt: CarteProtocol? in centre {
+        if let c: CarteProtocol = elt {
             print(c.numero, terminator: " ")
         } else {
             print("/", terminator: " ")
         }
     }
 }
-func choisirCarteCentre(nbJoueur : Int, centre: [Carte?]) -> Int {
+func choisirCarteCentre(nbJoueur : Int, centre: [CarteProtocol?]) -> Int {
 //Fonction qui demande a l'utilisateur de choisir l'indice de la carte du centre qu'il souhaite récupérer.
 //La fonction demande en boucle jusqu'a ce que l'indice rentré par l'utilisateur soit correct.
     var isOK : Bool = false
@@ -155,8 +155,8 @@ func choisirCarteCentre(nbJoueur : Int, centre: [Carte?]) -> Int {
         print("Entrez l'indice de la carte que vous souhaitez récupérer :")
         let saisieI : Int? = Int(readLine()!)
             if let l : Int = saisieI{
-                if (l < nbJoueur){
-                    if let c : Carte = centre[l]{
+                if l >= 0 && l < nbJoueur{
+                    if let c : CarteProtocol = centre[l]{
                         i = l
                         isOK = true
                     }
@@ -167,7 +167,7 @@ func choisirCarteCentre(nbJoueur : Int, centre: [Carte?]) -> Int {
                     }
                 }
                 else{
-                    print("L'indice est trop grand")
+                    print("L'indice est trop grand ou trop petit")
                     print("\n")
                 }
             }
@@ -178,7 +178,7 @@ func choisirCarteCentre(nbJoueur : Int, centre: [Carte?]) -> Int {
     }
     return i
 }
-func demanderDirection(joueur: Joueur) -> Direction {
+func demanderDirection(joueur: JoueurProtocol) -> Direction {
 //Fonction qui demande à l'utilisateur la direction dans laquelle il souhaite intégrer sa carte dans sa grille
 //La fonction demande en boucle la direction jusqu'a ce qu'elle soit conforme aux preconditions de la fonction deplacer.
     var isOk : Bool = false

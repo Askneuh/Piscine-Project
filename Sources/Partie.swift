@@ -3,12 +3,12 @@ import Foundation
 protocol PartieProtocol {
 
     var nbJoueur : Int {get}
-    var ordrePassage : [Joueur] {get set}
-    var Centre : [Carte?]{get set}
-    init(nbJoueur:Int, paquet : [Carte?])    
+    var ordrePassage : [JoueurProtocol] {get set}
+    var Centre : [CarteProtocol?]{get set}
+    init(nbJoueur:Int, paquet : [CarteProtocol?])    
     mutating func placerAuCentre(k: Int)
-    mutating func retirerDuCentre(indice:Int)->Carte
-    mutating func selectionner()->Carte
+    mutating func retirerDuCentre(indice:Int)->CarteProtocol
+    mutating func selectionner()->CarteProtocol
     mutating func changerOrdrePassage()
     mutating func distributionCarte()
     mutating func firstRoad()
@@ -20,20 +20,20 @@ protocol PartieProtocol {
 struct Partie : PartieProtocol{
     
     var nbJoueur: Int
-    var ordrePassage : [Joueur]     // tableau définissant l'ordre des joueurs 
-    var Centre: [Carte?]            // tableau des cartes piochées par les joueurs
-    var Paquet: [Carte?]            // paquet de carte
+    var ordrePassage : [JoueurProtocol]     // tableau définissant l'ordre des joueurs 
+    var Centre: [CarteProtocol?]            // tableau des cartes piochées par les joueurs
+    var Paquet: [CarteProtocol?]            // paquet de carte
 
     // initialiser une partie
-    init(nbJoueur: Int, paquet : [Carte?] ) {
+    init(nbJoueur: Int, paquet : [CarteProtocol?] ) {
 
         self.nbJoueur = nbJoueur
-        self.ordrePassage = [Joueur](repeating: Joueur(name: ""), count: nbJoueur)
-        self.Centre = [Carte?](repeating: nil, count: nbJoueur)
+        self.ordrePassage = [JoueurProtocol](repeating: Joueur(name: ""), count: nbJoueur)
+        self.Centre = [CarteProtocol?](repeating: nil, count: nbJoueur)
         self.Paquet = paquet
 
         // odrePassage est un tableau regroupant tous les joueurs dont on intialise le nom.
-        for i in 0..<ordrePassage.count        {
+        for i: Int in 0..<ordrePassage.count        {
             var nom : String = demanderNomJoueur(i : i+1)
             ordrePassage[i] = Joueur(name: nom)
         }
@@ -44,7 +44,7 @@ struct Partie : PartieProtocol{
 
     mutating func distributionCarte(){
 
-        for i in 0..<ordrePassage.count{
+        for i: Int in 0..<ordrePassage.count{
             self.Paquet = ordrePassage[i].distribue(paquet: &self.Paquet)
         }
 
@@ -54,14 +54,14 @@ struct Partie : PartieProtocol{
     
 
     mutating func placerAuCentre(k: Int) {
-        var copieOrdrePassage: [Joueur] = self.ordrePassage
+        var copieOrdrePassage: [JoueurProtocol] = self.ordrePassage
         var isOK : Bool = false
         var col : Int = 0
         var lig : Int = 0
         while !isOK{
             let coord : (Int, Int) = demanderIndice()
-            let carteTemp: Carte? = copieOrdrePassage[k].grille[coord.0][coord.1]
-            if let c: Carte = carteTemp{
+            let carteTemp: CarteProtocol? = copieOrdrePassage[k].grille[coord.0][coord.1]
+            if let c: CarteProtocol = carteTemp{
                 if c.estFaceCachee{ 
                     isOK = true
                     col = coord.1
@@ -69,8 +69,8 @@ struct Partie : PartieProtocol{
                 }
             }
         }
-        let carte: Carte? = copieOrdrePassage[k].piocher(i: lig, j: col)
-        if let c: Carte = carte{
+        let carte: CarteProtocol? = copieOrdrePassage[k].piocher(i: lig, j: col)
+        if let c: CarteProtocol = carte{
             Centre[k] = c
         }
         ordrePassage = copieOrdrePassage
@@ -80,7 +80,7 @@ struct Partie : PartieProtocol{
 
     //renvoie une carte selectionnée aléatoirement de la pioche et met nil à la place
 
-    mutating func selectionner()->Carte{  
+    mutating func selectionner()-> CarteProtocol{  
 
         var randomInt : Int = Int.random(in: 0...self.Paquet.count-1)
 
@@ -88,7 +88,7 @@ struct Partie : PartieProtocol{
             randomInt = Int.random(in: 0...self.Paquet.count-1)
         }
 
-        if let cartePiochee : Carte = self.Paquet[randomInt]{
+        if let cartePiochee : CarteProtocol = self.Paquet[randomInt]{
             self.Paquet[randomInt]=nil
             return cartePiochee
         }
@@ -101,9 +101,9 @@ struct Partie : PartieProtocol{
 
     // retire et renvoie la carte d'un indice entré en paramètre, met nil à la place
 
-    mutating func retirerDuCentre(indice:Int) -> Carte{
+    mutating func retirerDuCentre(indice:Int) -> CarteProtocol{
 
-        if let carteSelectionee : Carte = Centre[indice]{
+        if let carteSelectionee : CarteProtocol = Centre[indice]{
             Centre[indice]=nil
             return carteSelectionee
         }
@@ -113,25 +113,25 @@ struct Partie : PartieProtocol{
     }
 
     mutating func changerOrdrePassage(){
-        let dernierJoueur : Joueur = ordrePassage[0]
+        let dernierJoueur : JoueurProtocol = ordrePassage[0]
 
-        for i in 0..<ordrePassage.count-1{
+        for i: Int in 0..<ordrePassage.count-1{
             ordrePassage[i]=ordrePassage[i+1]      }
             ordrePassage[ordrePassage.count-1]=dernierJoueur
     }
 
     //prenant un tableau de carte (le tableau Centre), il permet d'avoir des informations pour le cas de base 
     //précondition : le tableau est rempli
-    private func occMinEtIndice(Tab : [Carte?])->(occurence : Int, indice : [Int]){
+    private func occMinEtIndice(Tab : [CarteProtocol?])->(occurence : Int, indice : [Int]){
 
-        let TabSansNul : [Carte] = Tab.compactMap { $0 } // permet de créer un tableau fait uniquement d'entier
+        let TabSansNul : [CarteProtocol] = Tab.compactMap { $0 } // permet de créer un tableau fait uniquement d'entier
 
         var minimum : Int = TabSansNul[0].numero
         var occ : Int = 0
         var indice : [Int] = [Int](repeating: 0, count: TabSansNul.count) 
         var indiceMin : Int = 0 // compteur pour suivre le nb d'indice trouvé pour un min donné
         
-        for i in 0..<Tab.count{
+        for i: Int in 0..<Tab.count{
 
             if TabSansNul[i].numero == minimum{
                 occ += 1
@@ -153,9 +153,9 @@ struct Partie : PartieProtocol{
 
     }
 
-    private func echanger2cases (tableau : [Joueur], indice1: Int, indice2: Int)->[Joueur]{
-        var tableauModifie : [Joueur] = tableau
-        let temp : Joueur = tableau[indice1]
+    private func echanger2cases (tableau : [JoueurProtocol], indice1: Int, indice2: Int)->[JoueurProtocol]{
+        var tableauModifie : [JoueurProtocol] = tableau
+        let temp : JoueurProtocol = tableau[indice1]
         tableauModifie[indice1] = tableauModifie[indice2]
         tableauModifie[indice2] = temp
         return tableauModifie
@@ -179,7 +179,7 @@ struct Partie : PartieProtocol{
     
     else if occ==2{
 
-        var mini : [Joueur] = [Joueur](repeating: Joueur(name: " "), count: 2)  // 'mini' tableau de 2 joueurs, pour que les deux joueurs ayant tirer la carte avec la plus petite valeur piochent dans ce qu'il reste du packet et ainsi déterminer qui joue en premier
+        var mini : [JoueurProtocol] = [JoueurProtocol](repeating: Joueur(name: " "), count: 2)  // 'mini' tableau de 2 joueurs, pour que les deux joueurs ayant tirer la carte avec la plus petite valeur piochent dans ce qu'il reste du packet et ainsi déterminer qui joue en premier
         
         // placement des joueurs ayant piochés les mêmes cartes à plus petite valeur, leurs indices sont présent dans le tableau 'Indice', on place dans 'mini' les joueurs correspondants
         
@@ -187,7 +187,7 @@ struct Partie : PartieProtocol{
             mini[i] = ordrePassage[indice[i]]
         }
         
-        var duel : [Carte] = [Carte](repeating: Carte(numero: 0), count: 2) // tableau où apparaît la carte repiochée de chaque joueur de 'mini'
+        var duel : [CarteProtocol] = [CarteProtocol](repeating: Carte(numero: 0), count: 2) // tableau où apparaît la carte repiochée de chaque joueur de 'mini'
         
         for i in 0...mini.count-1{
             duel[i] = selectionner()
@@ -211,13 +211,13 @@ struct Partie : PartieProtocol{
 
         // même principe que dans le cas 2, on crer un tableau mini où l'on stocke les joueuers ayant piochés les cartes à valeurs minimales
         
-        var mini : [Joueur] = [Joueur](repeating: Joueur(name: " "), count: occ)         // création d'un mini tableau pour les joueuers ayant les cartes à valeur minimales
+        var mini : [JoueurProtocol] = [JoueurProtocol](repeating: Joueur(name: " "), count: occ)         // création d'un mini tableau pour les joueuers ayant les cartes à valeur minimales
         
         for i in 0...mini.count-1{
             mini[i] = ordrePassage[indice[i]]
         }
 
-        var triel : [Carte] = [Carte](repeating: Carte(numero: 0), count: occ)          // / tableau où apparaît la carte repiochée de chaque joueur de 'mini'
+        var triel : [CarteProtocol] = [CarteProtocol](repeating: Carte(numero: 0), count: occ)          // / tableau où apparaît la carte repiochée de chaque joueur de 'mini'
         
         for i in 1...mini.count-1{
             triel[i] = selectionner()
@@ -261,7 +261,7 @@ struct Partie : PartieProtocol{
                     triel[2]=selectionner()            }            }
 
             let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: triel)
-            let OrdreJ : [Joueur] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0) 
+            let OrdreJ : [JoueurProtocol] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0) 
         }
     }
     mutating func jouerPremierTour()
@@ -282,7 +282,7 @@ struct Partie : PartieProtocol{
             print("\n") 
             affCentre(centre: self.Centre)
             var i: Int = choisirCarteCentre(nbJoueur: self.nbJoueur, centre: self.Centre)
-            var carte : Carte = self.retirerDuCentre(indice: i)
+            var carte : CarteProtocol = self.retirerDuCentre(indice: i)
             carte.retourner()
             while !(self.ordrePassage[k].estComplet){
                 var dir : Direction = demanderDirection(joueur: self.ordrePassage[k])
@@ -292,38 +292,56 @@ struct Partie : PartieProtocol{
         }
         self.changerOrdrePassage()
     }
+
     mutating func jouerTour(){
         for i: Int in 0..<self.ordrePassage.count {
-        print("\n")
-        print("Au tour de ", self.ordrePassage[i].name)
-        print("\n")
-        AffGrille(joueur: self.ordrePassage[i])
-        self.placerAuCentre(k: i)
-        AffGrille(joueur: self.ordrePassage[i])
-    }
-    for k: Int in 0..<self.ordrePassage.count {
-        print("\n")
-        print("Au tour de ", self.ordrePassage[k].name)
-        print("\n")
-        AffGrille(joueur: self.ordrePassage[k])
-        print("\n")
-        affCentre(centre: self.Centre)
-        var i: Int = choisirCarteCentre(nbJoueur: self.nbJoueur, centre: self.Centre)
-        var carte : Carte = self.retirerDuCentre(indice: i)
-        carte.retourner()
-        while !(self.ordrePassage[k].estComplet){
-            var dir : Direction = demanderDirection(joueur: self.ordrePassage[k])
-            self.ordrePassage[k].deplacer(deplacement: dir, carte: carte, i: self.ordrePassage[k].coordCaseVide.0, j: self.ordrePassage[k].coordCaseVide.1)
+            print("\n")
+            print("Au tour de ", self.ordrePassage[i].name)
+            print("\n")
+            AffGrille(joueur: self.ordrePassage[i])
+            self.placerAuCentre(k: i)
+            AffGrille(joueur: self.ordrePassage[i])
+        }
+        for k: Int in 0..<self.ordrePassage.count {
+            print("\n")
+            print("Au tour de ", self.ordrePassage[k].name)
+            print("\n")
             AffGrille(joueur: self.ordrePassage[k])
+            print("\n")
+            affCentre(centre: self.Centre)
+            var i: Int = choisirCarteCentre(nbJoueur: self.nbJoueur, centre: self.Centre)
+            var carte : CarteProtocol = self.retirerDuCentre(indice: i)
+            carte.retourner()
+            while !(self.ordrePassage[k].estComplet){
+                var dir : Direction = demanderDirection(joueur: self.ordrePassage[k])
+                self.ordrePassage[k].deplacer(deplacement: dir, carte: carte, i: self.ordrePassage[k].coordCaseVide.0, j: self.ordrePassage[k].coordCaseVide.1)
+                AffGrille(joueur: self.ordrePassage[k])
         }
     }
     self.changerOrdrePassage()
     }
+
+    func triInsertionSurScore()->[JoueurProtocol]{
+        var temp: [JoueurProtocol] = [JoueurProtocol](repeating:Joueur(name: ""), count:self.nbJoueur)
+        for k: Int in 0..<self.ordrePassage.count{
+            temp[k] = self.ordrePassage[k]
+        }
+        for j in 0..<temp.count{
+                var score: Int = temp[j].score
+                var joueurTemp: JoueurProtocol = temp[j]
+                var i: Int = j - 1
+                while i >= 0 && temp[i].score < score{
+                    temp[i+1] = temp[i]
+                    i = i - 1
+                }
+                temp[i+1] = joueurTemp
+        }
+        return temp
+    }
     func resultat(){
-        var joueurs = self.ordrePassage
-        joueurs.sorted {$0.score < $1.score}
+        var joueurs: [JoueurProtocol] = self.triInsertionSurScore()
         print("Classement :")
-        for joueur in joueurs{
+        for joueur: JoueurProtocol in joueurs{
             print(joueur.name," : " ,joueur.score)
         }
     }
