@@ -2,11 +2,11 @@ func AffGrille(joueur : JoueurProtocol)
 //Fonction d'affichage de la grille d'un joueur passé en paramètre
 //Parcours chaque carte de la grille, si la carte est face cachée, affiche "?", sinon, affiche la valeur de la carte
 {
-    for i: Int in 0...joueur.grille.count-1
+    for i: Int in 0..<joueur.taillePlateau
     {
-        for j: Int in 0...joueur.grille[0].count-1
+        for j: Int in 0..<joueur.taillePlateau
         {
-            if let c : CarteProtocol = joueur.grille[i][j]
+            if let c : CarteProtocol = joueur[i, j]
             {
                 if c.estFaceCachee{
                     print("?", terminator: " ")
@@ -188,7 +188,7 @@ func demanderDirection(joueur: JoueurProtocol) -> Direction {
         if let saisie = readLine(), let dir = Direction(rawValue: saisie) {
             switch dir{
                 case .Gauche:
-                    if (joueur.coordCaseVide.1==joueur.grille.count-1){
+                    if (joueur.coordCaseVide.1==joueur.taillePlateau-1){
                         print("déplacement impossible, veuillez séléctionner déplacement valide")
                     }
                     else{
@@ -206,7 +206,7 @@ func demanderDirection(joueur: JoueurProtocol) -> Direction {
                     }
                 
                 case .Haut:
-                    if (joueur.coordCaseVide.0==joueur.grille.count-1){
+                    if (joueur.coordCaseVide.0==joueur.taillePlateau-1){
                         print("déplacement impossible, veuillez séléctionner déplacement valide")
                     }
                     else{

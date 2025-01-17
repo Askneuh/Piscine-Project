@@ -12,8 +12,14 @@ protocol PartieProtocol {
     mutating func changerOrdrePassage()
     mutating func distributionCarte()
     mutating func firstRoad()
+    //jouerPremierTour: Partie -> Partie
+    //Fait jouer le premier tour aux joueurs de la partie
     mutating func jouerPremierTour()
+    //jouerTour: Partie -> Partie
+    //Fait jouer un tour aux joueurs de la partie
     mutating func jouerTour()
+    //resultat: Partie -> None
+    //Affiche le classement des joueurs en fonction de leur score
     func resultat()
 }
 
@@ -60,7 +66,7 @@ struct Partie : PartieProtocol{
         var lig : Int = 0
         while !isOK{
             let coord : (Int, Int) = demanderIndice()
-            let carteTemp: CarteProtocol? = copieOrdrePassage[k].grille[coord.0][coord.1]
+            let carteTemp: CarteProtocol? = copieOrdrePassage[k][coord.0, coord.1]
             if let c: CarteProtocol = carteTemp{
                 if c.estFaceCachee{ 
                     isOK = true
@@ -264,6 +270,8 @@ struct Partie : PartieProtocol{
             let OrdreJ : [JoueurProtocol] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0) 
         }
     }
+    //jouerPremierTour: Partie -> Partie
+    //Fait jouer le premier tour aux joueurs de la partie
     mutating func jouerPremierTour()
     {
         for i: Int in 0..<self.ordrePassage.count {
@@ -272,6 +280,9 @@ struct Partie : PartieProtocol{
             AffGrille(joueur: self.ordrePassage[i])
             self.placerAuCentre(k: i)
             AffGrille(joueur: self.ordrePassage[i])
+            print("\n")
+            affCentre(centre: self.Centre)
+            print("\n")
         }
         self.firstRoad()
 
@@ -292,7 +303,8 @@ struct Partie : PartieProtocol{
         }
         self.changerOrdrePassage()
     }
-
+    //jouerTour: Partie -> Partie
+    //Fait jouer un tour aux joueurs de la partie
     mutating func jouerTour(){
         for i: Int in 0..<self.ordrePassage.count {
             print("\n")
@@ -301,6 +313,9 @@ struct Partie : PartieProtocol{
             AffGrille(joueur: self.ordrePassage[i])
             self.placerAuCentre(k: i)
             AffGrille(joueur: self.ordrePassage[i])
+            print("\n")
+            affCentre(centre: self.Centre)
+            print("\n")
         }
         for k: Int in 0..<self.ordrePassage.count {
             print("\n")
@@ -320,7 +335,7 @@ struct Partie : PartieProtocol{
     }
     self.changerOrdrePassage()
     }
-
+    //Trie les joueurs selon leur score, du plus faible au plus élevé
     func triInsertionSurScore()->[JoueurProtocol]{
         var temp: [JoueurProtocol] = [JoueurProtocol](repeating:Joueur(name: ""), count:self.nbJoueur)
         for k: Int in 0..<self.ordrePassage.count{
@@ -338,11 +353,17 @@ struct Partie : PartieProtocol{
         }
         return temp
     }
+    //resultat: Partie -> None
+    //Affiche le classement des joueurs en fonction de leur score
     func resultat(){
         var joueurs: [JoueurProtocol] = self.triInsertionSurScore()
+        var i: Int = self.nbJoueur
         print("Classement :")
         for joueur: JoueurProtocol in joueurs{
-            print(joueur.name," : " ,joueur.score)
+            print(i, " : " ,joueur.name," : " ,joueur.score)
+            i -= 1
         }
+        print("\n")
+        print(joueurs[self.nbJoueur - 1].name, "a gagné.")
     }
 }
