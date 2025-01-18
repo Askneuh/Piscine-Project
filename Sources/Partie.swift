@@ -3,7 +3,6 @@ import Foundation
 protocol PartieProtocol {
 
     var nbJoueur : Int {get}
-<<<<<<< Sources/Partie.swift
     var ordrePassage : [JoueurProtocol] {get set}       // définit l'ordre de passage des joueurs
     var Centre : [CarteProtocol?]{get set}              // tableau de cartes que les joueurs selectionnent et sortent de leurs grilles pour les placer au centre
     init(nbJoueur:Int, paquet : [CarteProtocol?])       // créer une partie avec un nombre de joueur valide et un paquet de cartes
@@ -173,7 +172,7 @@ struct Partie : PartieProtocol{
     //cas de base, permet de determiner l'odre du premier joueur
     mutating func firstRound(){
 
-        var copieCentre : [Carte?] = Centre                                         // le Centre sera modifié si la valeur minimale de carte apparait plus d'une fois dans le Centre, nous ne voulons pas le modifié, mais juste déterminer le premier jouer à jouer
+        var copieCentre : [CarteProtocol?] = Centre                                         // le Centre sera modifié si la    valeur minimale de carte apparait plus d'une fois dans le Centre, nous ne voulons pas le modifié, mais juste déterminer le premier jouer à jouer
         var (occ, indiceMin) : (Int, [Int]) = occMinEtIndice(Tab: copieCentre)      // indiceMin permettra entre autre de pouvoir remonté au joueur possédant la carte de valeur minimale
 
         while occ != 1 {
@@ -185,213 +184,8 @@ struct Partie : PartieProtocol{
         }
 
         ordrePassage = echanger2cases(tableau: ordrePassage, indice1: 0, indice2: indiceMin[0])
-    
-        if occ==1{
-
-            ordrePassage = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0)       
-        
-        }
-
-    // si la carte ayant la plus petite valeur apparaît deux fois, les joueurs la possédant piochent de nouveux jusqu'à ce que les cartes repiochées soient différentes et ainsi, la joueur ayant la plus petite carte des deux jouera en premier.
-    
-        else if occ==2{
-
-            var mini : [JoueurProtocol] = [JoueurProtocol](repeating: Joueur(name: " "), count: 2)  // 'mini' tableau de 2 joueurs, pour que les deux joueurs ayant tirer la carte avec la plus petite valeur piochent dans ce qu'il reste du packet et ainsi déterminer qui joue en premier
-        
-        // placement des joueurs ayant piochés les mêmes cartes à plus petite valeur, leurs indices sont présent dans le tableau 'Indice', on place dans 'mini' les joueurs correspondants
-        
-            for i in 0...mini.count-1{
-                mini[i] = ordrePassage[indice[i]]
-            }
-        
-            var duel : [CarteProtocol] = [CarteProtocol](repeating: Carte(numero: 0), count: 2) // tableau où apparaît la carte repiochée de chaque joueur de 'mini'
-        
-            for i in 0...mini.count-1{
-                duel[i] = selectionner()
-            }
-
-            var (occDuel, indiceDuel) : (Int, [Int]) = occMinEtIndice(Tab : duel)
-
-            while occDuel != 1 {
-
-                if duel[0].numero == duel[1].numero {
-                    duel[0] = selectionner()
-                    duel[1] = selectionner()
-                }
-
-                else if duel[1].numero == duel[2].numero {
-                    duel[1] = selectionner()
-                    duel[2] = selectionner()
-                }
-
-                else {
-                    duel[0] = selectionner()
-                    duel[2] = selectionner()
-                }
-            }
-            (occDuel, indiceDuel) = occMinEtIndice(Tab: duel)
-        }
-
-        ordrePassage = echanger2cases(tableau: ordrePassage, indice1: indice[indiceDuel[0]], indice2: 0)
-
-
     }
-
-    // si la carte ayant la plus petite valeur apparaît tois fois, les joueurs la possédant piochent de nouveux jusqu'à ce que les cartes repiochées soient toutes différentes et ainsi, la joueur ayant la plus petite carte des deux jouera en premier.
-
-    else if occ == 3 {
-
-        // même principe que dans le cas 2, on crer un tableau mini où l'on stocke les joueuers ayant piochés les cartes à valeurs minimales
         
-        var mini : [JoueurProtocol] = [JoueurProtocol](repeating: Joueur(name: " "), count: occ)         // création d'un mini tableau pour les joueuers ayant les cartes à valeur minimales
-        
-        for i in 0...mini.count-1{
-            mini[i] = ordrePassage[indice[i]]
-        }
-
-        var triel : [CarteProtocol] = [CarteProtocol](repeating: Carte(numero: 0), count: occ)          // / tableau où apparaît la carte repiochée de chaque joueur de 'mini'
-        
-        for i in 1...mini.count-1{
-            triel[i] = selectionner()
-        }
-
-        var (occTriel, indiceTriel) : (Int, [Int]) = occMinEtIndice(Tab: triel)
-        
-        while occTriel != 1 {
-
-            if occTriel == 3 {              // cas où les trois cartes piochées sont égales
-                
-                for i in 0...mini.count-1{
-                    triel[i] = selectionner()
-                }       
-
-            }
-
-            else if occTriel == 2 {                     // cas où deux cartes pichés sont égales 
-                
-                if triel[0].numero == triel[1].numero  {
-                    triel[0] = selectionner()
-                    triel[1] = selectionner()            
-                }
-
-                else if triel[0].numero  == triel[2].numero  {
-
-                    triel[0] = selectionner()
-                    triel[2] = selectionner()            
-                }
-
-                else if triel[1].numero  == triel[2].numero  {
-
-                    triel[1] = selectionner()
-                    triel[2] = selectionner()            
-                }
-            }
-
-            (occTriel, indiceTriel) = occMinEtIndice(Tab: triel)
-        }
-
-        ordrePassage = echanger2cases(tableau: ordrePassage, indice1: indice[indiceTriel[0]], indice2: 0)  
-             
-    }
-
-        // cas où les quatre joueurs ont la même carte // occ == 4
-
-        else {
-
-            var mini : [Joueur] = [Joueur](repeating: Joueur(name: " "), count: occ)         // création d'un mini tableau pour les joueuers ayant les cartes à valeur minimales
-        
-            for i in 0...mini.count-1{
-                mini[i] = ordrePassage[indice[i]]
-            }
-
-            var quat : [Carte] = [Carte](repeating: Carte(numero: 0), count: occ)          // / tableau où apparaît la carte repiochée de chaque joueur de 'mini'
-            
-            for i in 1...mini.count-1{
-                quat[i] = selectionner()
-            }
-
-            var (occquat, indiceQuat) : (Int, [Int]) = occMinEtIndice(Tab: quat)
-        
-            while occquat != 1 {
-
-                if occquat == 4{              // cas où les trois cartes piochées sont égales
-                    
-                    for i in 0...mini.count-1{
-                        quat[i] = selectionner()
-                    }       
-
-                }
-
-                else if occquat == 3 {                     // cas où deux cartes pichés sont égales 
-                    
-                    if quat[0].numero == quat[1].numero && quat[1].numero == quat[2].numero  {
-                        quat[0] = selectionner()
-                        quat[1] = selectionner()
-                        quat[2] = selectionner()            
-                    }
-
-                    else if quat[0].numero == quat[2].numero && quat[2].numero == quat[3].numero  {
-
-                        quat[0] = selectionner()
-                        quat[2] = selectionner()
-                        quat[3] = selectionner()
-                    }
-
-                    else if quat[1].numero  == quat[2].numero && quat[2].numero == quat[3].numero {
-
-                        quat[1] = selectionner()
-                        quat[2] = selectionner()
-                        quat[3] = selectionner()           
-                    }
-                }
-
-                else if occquat == 2 {
-
-                    if quat[0].numero == quat[1].numero  {
-                        quat[0] = selectionner()
-                        quat[1] = selectionner()            
-                    }
-
-                    else if quat[0].numero  == quat[2].numero  {
-
-                        quat[0] = selectionner()
-                        quat[2] = selectionner()            
-                    }
-
-                    else if quat[0].numero  == quat[3].numero  {
-
-                        quat[0] = selectionner()
-                        quat[3] = selectionner()            
-                    }
-
-                    else if quat[1].numero == quat[2].numero  {
-                        quat[1] = selectionner()
-                        quat[2] = selectionner()            
-                    }
-
-                    else if quat[1].numero  == quat[3].numero  {
-
-                        quat[1] = selectionner()
-                        quat[3] = selectionner()            
-                    }
-
-                    else if quat[2].numero  == quat[3].numero  {
-
-                        quat[2] = selectionner()
-                        quat[3] = selectionner()            
-                    }
-                }
-
-                (occquat, indiceQuat) = occMinEtIndice(Tab: quat)
-            }
-
-            ordrePassage = echanger2cases(tableau: ordrePassage, indice1: indice[indiceQuat[0]], indice2: 0)
-
-
-            let (occ, indice) : (Int, [Int]) = occMinEtIndice(Tab: triel)
-            let OrdreJ : [JoueurProtocol] = echanger2cases(tableau: ordrePassage, indice1: indice[0], indice2: 0) 
-        }
-    }
     //jouerPremierTour: Partie -> Partie
     //Fait jouer le premier tour aux joueurs de la partie
     mutating func jouerPremierTour(){
