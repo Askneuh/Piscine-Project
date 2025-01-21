@@ -199,7 +199,7 @@ struct Partie : PartieProtocol{
             affCentre(centre: self.Centre)
             print("\n")
         }
-        self.firstRoad()
+        self.firstRound()
 
         for k: Int in 0..<self.ordrePassage.count {
             print("Au tour de ", self.ordrePassage[k].name)
