@@ -3,8 +3,6 @@
 
 
 var nbJoueur : Int = demanderNbJoueur()
-print(type(of: nbJoueur))
-print(nbJoueur)
 //Creation du paquet de cartes                                                                                                                                                                            
 var paquet = [Carte?](repeating: Carte(numero: 0), count: 100)
 for numero in 1...10 {
