@@ -5,7 +5,7 @@ protocol PartieProtocol {
     var nbJoueur : Int {get}
     var ordrePassage : [JoueurProtocol] {get set}       // définit l'ordre de passage des joueurs
     var Centre : [CarteProtocol?]{get set}              // tableau de cartes que les joueurs selectionnent et sortent de leurs grilles pour les placer au centre
-    init(nbJoueur:Int, paquet : [CarteProtocol?])       // créer une partie avec un nombre de joueur valide et un paquet de cartes
+    init(paquet : [CarteProtocol?])       // créer une partie avec un nombre de joueur valide et un paquet de cartes
     mutating func placerAuCentre(k: Int)                // un joueur selectionne une carte d'indice 'k' du Centre qu'il placera dans sa grille par un mouvement valide
     mutating func retirerDuCentre(indice:Int)->CarteProtocol    // retire l'élément d'indice 'indice' du Centre et renvoie la carte selectionnée
     mutating func selectionner()->CarteProtocol         // selectionne aléatoirement une carte du paquet (la pioche) et la renvoie          (avec du recul, nous aurions du travailler sur le modèle de la pile pour le paquet)
@@ -25,14 +25,13 @@ protocol PartieProtocol {
 
 struct Partie : PartieProtocol{
     
-    var nbJoueur: Int
+    var nbJoueur: Int = 2
     var ordrePassage : [JoueurProtocol]     // tableau définissant l'ordre des joueurs 
     var Centre: [CarteProtocol?]            // tableau des cartes piochées par les joueurs
     var Paquet: [CarteProtocol?]            // paquet de carte
 
     // initialiser une partie avec un nombre de joueur valide, et un paquet de cartes contenant un nombre d'exemplaire définit 
-    init(nbJoueur: Int, paquet : [CarteProtocol?] ) {
-        self.nbJoueur = nbJoueur
+    init(paquet : [CarteProtocol?] ) {
         self.ordrePassage = [JoueurProtocol](repeating: Joueur(name: ""), count: nbJoueur)
         self.Centre = [CarteProtocol?](repeating: nil, count: nbJoueur)
         self.Paquet = paquet
