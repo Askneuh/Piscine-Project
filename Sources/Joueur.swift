@@ -48,7 +48,7 @@ struct Joueur : JoueurProtocol
 {
     //taillePlateau: Joueur -> Int
     //Taille du plateau, sachant que le plateau est une grille qui a autant de ligne que de colonne
-    public var taillePlateau: Int = 4
+    public var taillePlateau: Int = 3
     //coordCaseVide: Joueur -> Int
     //Coordonnées de la case vide
     //Il ne peut y avoir qu'une seule case vide à la fois
@@ -63,7 +63,7 @@ struct Joueur : JoueurProtocol
     init(name : String)
     {
         self.name = name
-        self.grille = [[CarteProtocol?]](repeating: [CarteProtocol?](repeating: Carte(numero: 0), count: 4), count: 4)
+        self.grille = [[CarteProtocol?]](repeating: [CarteProtocol?](repeating: Carte(numero: 0), count: 3), count: 3)
         self.coordCaseVide = (-1, -1)
     }
     //Permet d'accéder et de modifier les éléments du plateau
