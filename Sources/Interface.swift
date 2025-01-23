@@ -2,8 +2,14 @@ func AffGrille(joueur : JoueurProtocol)
 //Fonction d'affichage de la grille d'un joueur passé en paramètre
 //Parcours chaque carte de la grille, si la carte est face cachée, affiche "?", sinon, affiche la valeur de la carte
 {
+    print("  ", terminator: "")
+    for j in 0..<joueur.taillePlateau {
+        print(j, terminator: " ")
+    }
+    print("  ")
     for i: Int in 0..<joueur.taillePlateau
     {
+        print(i, terminator: " ")
         for j: Int in 0..<joueur.taillePlateau
         {
             if let c : CarteProtocol = joueur[i, j]
@@ -138,6 +144,10 @@ func demanderIndice() -> (Int, Int){
 func affCentre(centre: [CarteProtocol?]) {
 //Fonction qui permet l'affichage du centre du jeu
 //Pour chaque case du centre, si la case est une carte, la fonction affiche le numéro de la carte, sinon, la fonction affiche "/"
+    for i in 0..<centre.count{
+        print(i, terminator:" ")
+    }
+    print(" ")
     for elt: CarteProtocol? in centre {
         if let c: CarteProtocol = elt {
             print(c.numero, terminator: " ")
@@ -343,6 +353,9 @@ func verifIndice(k: Int, partie: PartieProtocol)-> (Int, Int){
                     isOK = true
                     col = coord.1
                     lig = coord.0
+            }
+            else{
+                print("Cette carte est déja retournée")
             }
         }
     }
