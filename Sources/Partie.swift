@@ -5,6 +5,7 @@ protocol PartieProtocol {
     var nbJoueur : Int {get}
     var ordrePassage : [JoueurProtocol] {get set}       // définit l'ordre de passage des joueurs
     var Centre : [CarteProtocol?]{get set}              // tableau de cartes que les joueurs selectionnent et sortent de leurs grilles pour les placer au centre
+
     init(nbJoueur:Int, paquet : [CarteProtocol?], listeJoueur: [JoueurProtocol])       // créer une partie avec un nombre de joueur valide et un paquet de cartes
     mutating func placerAuCentre(k: Int)                // un joueur selectionne une carte d'indice 'k' du Centre qu'il placera dans sa grille par un mouvement valide
     mutating func retirerDuCentre(indice:Int)->CarteProtocol    // retire l'élément d'indice 'indice' du Centre et renvoie la carte selectionnée
@@ -14,12 +15,10 @@ protocol PartieProtocol {
     mutating func firstRound()                           // définit quel joueur jouera en premier
 }
 struct Partie : PartieProtocol{
-    
-    public private(set) var nbJoueur: Int
+    var nbJoueur: Int = 2
     var ordrePassage : [JoueurProtocol]     // tableau définissant l'ordre des joueurs 
     var Centre: [CarteProtocol?]            // tableau des cartes piochées par les joueurs
     private var Paquet: [CarteProtocol?]            // paquet de carte
-
     // initialiser une partie avec un nombre de joueur valide, et un paquet de cartes contenant un nombre d'exemplaire définit 
     init(nbJoueur: Int, paquet : [CarteProtocol?], listeJoueur: [JoueurProtocol]) {
         self.nbJoueur = nbJoueur

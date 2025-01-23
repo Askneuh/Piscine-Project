@@ -28,7 +28,7 @@ func affPaquet(paquet : [CarteProtocol?]) -> [Int]
 //Fonction d'affichage du paquet.
 //Ne sers pas dans le main, mais a permis de vérifier la création du paquet
 {
-    var res : [Int] = [Int](repeating: 0, count: 100)
+    var res : [Int] = [Int](repeating: 0, count: 30)
     for i: Int in  0..<paquet.count{
         if let carte : CarteProtocol = paquet[i]
         {
@@ -40,41 +40,6 @@ func affPaquet(paquet : [CarteProtocol?]) -> [Int]
         }
     }
     return res
-}
-
-func demanderNbJoueur() -> Int
-//Fonction demandant à l'utilisateur d'insérer le nombre de joueur qu'il souhaite faire participer
-//La fonction vérifie que l'input soit bien un nombre entier compris entre 2 et 4, afin que le retour de cette fonction
-//soit conforme aux préconditions données par les règles du jeu
-//La fonction demande une entrée clavier en boucle jusqu'a obtenir une entrée correcte.
-{
-    var commencerPartie : Bool = false
-    var nbJoueur : Int = 0
-    while !commencerPartie
-    {
-        print("Combien de joueur souhaitez vous faire participer ?")
-        let saisie: Int? = Int(readLine()!)
-        if let nb : Int = saisie
-        {
-            if nb >= 2 && nb <= 4
-            {
-                print("La partie commence avec", nb, "joueurs.")
-                commencerPartie = true
-                nbJoueur = nb
-            }
-            else
-            {
-                print("Le nombre de joueur n'est pas valide. Veuillez saisir un nombre entre 2 et 4")
-            }
-
-        
-        }
-        else
-        {
-            print("Veuillez saisir un nombre entre 2 et 4")
-        }
-    }
-    return nbJoueur
 }
 
 func demanderNomJoueur(i : Int) -> String
