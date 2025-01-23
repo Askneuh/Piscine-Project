@@ -6,7 +6,7 @@ protocol PartieProtocol {
     var ordrePassage : [JoueurProtocol] {get set}       // définit l'ordre de passage des joueurs
     var Centre : [CarteProtocol?]{get set}              // tableau de cartes que les joueurs selectionnent et sortent de leurs grilles pour les placer au centre
     init(nbJoueur:Int, paquet : [CarteProtocol?], listeJoueur: [JoueurProtocol])       // créer une partie avec un nombre de joueur valide et un paquet de cartes
-    mutating func placerAuCentre(k: Int)                // un joueur selectionne une carte d'indice 'k' du Centre qu'il placera dans sa grille par un mouvement valide
+    mutating func placerAuCentre(k: Int, lig: Int, col:Int)                // un joueur selectionne une carte d'indice 'k' du Centre qu'il placera dans sa grille par un mouvement valide
     mutating func retirerDuCentre(indice:Int)->CarteProtocol    // retire l'élément d'indice 'indice' du Centre et renvoie la carte selectionnée
     mutating func selectionner()->CarteProtocol         // selectionne aléatoirement une carte du paquet (la pioche) et la renvoie          (avec du recul, nous aurions du travailler sur le modèle de la pile pour le paquet)
     mutating func changerOrdrePassage()                 // met à jour l'ordre de passage des joueurs à chaque tour.
@@ -43,7 +43,7 @@ struct Partie : PartieProtocol{
     // précondition : - 0 <= k <= Centre.count-1
     //                - 'k' =/= à un indice du Centre déjà séléctionné par un autre joueur
 
-    mutating func placerAuCentre(k: Int) {
+    mutating func placerAuCentre(k: Int, lig:Int, col:Int) {
         var copieOrdrePassage: [JoueurProtocol] = self.ordrePassage
         var isOK : Bool = false         // si l'indice 'k' ne vérifie pas les préconditions, isOk = false
         var col : Int = 0
@@ -114,8 +114,12 @@ struct Partie : PartieProtocol{
 
     //précondition : le Centre est rempli
     private func occMinEtIndice(Tab : [CarteProtocol?])->(occurence : Int, indice : [Int]){
-        let TabSansNul : [CarteProtocol] = Tab.compactMap { $0 } // permet de créer un tableau fait uniquement d'entier
-
+        var TabSansNul : [CarteProtocol] = [CarteProtocol](repeating:Carte(numero:0), count: self.nbJoueur) // permet de créer un tableau fait uniquement d'entier
+        for i in 0..<Tab.count{
+            if let c: CarteProtocol = Tab[i]{
+                TabSansNul[i] = c
+            }
+        }
         var minimum : Int = TabSansNul[0].numero
         var occ : Int = 0
         var indice : [Int] = [Int](repeating: 0, count: TabSansNul.count)                   // permet de stocker les indices des joueurs ayant piochés la carte de valeur miniales dans le Centre
