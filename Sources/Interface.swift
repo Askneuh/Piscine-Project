@@ -231,4 +231,100 @@ func demanderDirection(joueur: JoueurProtocol) -> Direction {
     }
     return direction_r
 }
-    
+//resultat: Partie -> None
+//Affiche le classement des joueurs en fonction de leur score
+func resultat(partie: PartieProtocol){
+var joueurs: [JoueurProtocol] = triInsertionSurScore(T: partie.ordrePassage)
+var i: Int = partie.nbJoueur
+print("Classement :")
+for joueur: JoueurProtocol in joueurs{
+    print(i, " : " ,joueur.name," : " ,joueur.score)
+    i -= 1
+}
+print("\n")
+print(joueurs[partie.nbJoueur - 1].name, "a gagné.")
+}
+
+//jouerPremierTour: Partie -> Partie
+//Fait jouer le premier tour aux joueurs de la partie
+func jouerPremierTour(partie: inout PartieProtocol){
+    for i: Int in 0..<partie.ordrePassage.count {
+        print("\n")
+        print("Au tour de ", partie.ordrePassage[i].name)
+        AffGrille(joueur: partie.ordrePassage[i])
+        partie.placerAuCentre(k: i)
+        AffGrille(joueur: partie.ordrePassage[i])
+        print("\n")
+        affCentre(centre: partie.Centre)
+    print("\n")
+    }
+    partie.firstRound()
+
+    for k: Int in 0..<partie.ordrePassage.count {
+        print("Au tour de ", partie.ordrePassage[k].name)
+        print("\n")
+        AffGrille(joueur: partie.ordrePassage[k])
+        print("\n") 
+        affCentre(centre: partie.Centre)
+        var i: Int = choisirCarteCentre(nbJoueur: partie.nbJoueur, centre: partie.Centre)
+        var carte : CarteProtocol = partie.retirerDuCentre(indice: i)
+        carte.retourner()
+        while !(partie.ordrePassage[k].estComplet){
+            var dir : Direction = demanderDirection(joueur: partie.ordrePassage[k])
+        partie.ordrePassage[k].deplacer(deplacement: dir, carte: carte, i: partie.ordrePassage[k].coordCaseVide.0, j: partie.ordrePassage[k].coordCaseVide.1)
+        AffGrille(joueur: partie.ordrePassage[k])
+        }
+    }
+partie.changerOrdrePassage()
+}
+//jouerTour: Partie -> Partie
+//Fait jouer un tour aux joueurs de la partie
+func jouerTour(partie: inout PartieProtocol){
+    for i: Int in 0..<partie.ordrePassage.count {
+        print("\n")
+        print("Au tour de ", partie.ordrePassage[i].name)
+        print("\n")
+        AffGrille(joueur: partie.ordrePassage[i])
+        partie.placerAuCentre(k: i)
+        AffGrille(joueur: partie.ordrePassage[i])
+        print("\n")
+        affCentre(centre: partie.Centre)
+        print("\n")
+    }
+    for k: Int in 0..<partie.ordrePassage.count {
+        print("\n")
+        print("Au tour de ", partie.ordrePassage[k].name)
+        print("\n")
+        AffGrille(joueur: partie.ordrePassage[k])
+        print("\n")
+        affCentre(centre: partie.Centre)
+        var i: Int = choisirCarteCentre(nbJoueur: partie.nbJoueur, centre: partie.Centre)
+        var carte : CarteProtocol = partie.retirerDuCentre(indice: i)
+        carte.retourner()
+        while !(partie.ordrePassage[k].estComplet){
+            var dir : Direction = demanderDirection(joueur: partie.ordrePassage[k])
+            partie.ordrePassage[k].deplacer(deplacement: dir, carte: carte, i: partie.ordrePassage[k].coordCaseVide.0, j: partie.ordrePassage[k].coordCaseVide.1)
+            AffGrille(joueur: partie.ordrePassage[k])
+        }
+    }
+    partie.changerOrdrePassage()
+}
+
+//Trie les joueurs selon leur score, du plus faible au plus élevé
+func triInsertionSurScore(T: [JoueurProtocol])->[JoueurProtocol]{
+    var temp: [JoueurProtocol] = [JoueurProtocol](repeating:Joueur(name: ""), count:T.count)
+    for k: Int in 0..<T.count{
+        temp[k] = T[k]
+    }
+    for j in 0..<temp.count{
+            var score: Int = temp[j].score
+            var joueurTemp: JoueurProtocol = temp[j]
+            var i: Int = j - 1
+            while i >= 0 && temp[i].score < score{
+                temp[i+1] = temp[i]
+                i = i - 1
+            }
+            temp[i+1] = joueurTemp
+    }
+    return temp
+}

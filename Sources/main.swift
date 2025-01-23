@@ -6,11 +6,15 @@ for numero in 1...10 {
         paquet[(numero - 1) * 10 + i] = Carte(numero: numero)
     }
 }
-
-var partie : PartieProtocol = Partie(nbJoueur: nbJoueur, paquet: paquet)
+var joueurs: [JoueurProtocol] = [JoueurProtocol](repeating:Joueur(name: " "), count:nbJoueur)
+for i: Int in 0..<joueurs.count{
+    var nom : String = demanderNomJoueur(i : i+1)
+    joueurs[i] = Joueur(name: nom)
+        }
+var partie : PartieProtocol = Partie(nbJoueur: nbJoueur, paquet: paquet, listeJoueur: joueurs)
 partie.distributionCarte()
-partie.jouerPremierTour()
+jouerPremierTour(partie: &partie)
 for h in 0...14{
-    partie.jouerTour()
+    jouerTour(partie: &partie)
 }
-partie.resultat()
+resultat(partie: partie)
