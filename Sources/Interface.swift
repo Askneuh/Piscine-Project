@@ -217,7 +217,8 @@ func jouerPremierTour(partie: inout PartieProtocol){
         print("\n")
         print("Au tour de ", partie.ordrePassage[i].name)
         AffGrille(joueur: partie.ordrePassage[i])
-        partie.placerAuCentre(k: i)
+        var j: (Int, Int) = verifIndice(k: i, partie: partie)
+        partie.placerAuCentre(k: i, lig : j.0, col: j.1)
         AffGrille(joueur: partie.ordrePassage[i])
         print("\n")
         affCentre(centre: partie.Centre)
@@ -250,7 +251,8 @@ func jouerTour(partie: inout PartieProtocol){
         print("Au tour de ", partie.ordrePassage[i].name)
         print("\n")
         AffGrille(joueur: partie.ordrePassage[i])
-        partie.placerAuCentre(k: i)
+        var j: (Int, Int) = verifIndice(k: i, partie: partie)
+        partie.placerAuCentre(k: i, lig : j.0, col: j.1)
         AffGrille(joueur: partie.ordrePassage[i])
         print("\n")
         affCentre(centre: partie.Centre)
@@ -292,4 +294,22 @@ func triInsertionSurScore(T: [JoueurProtocol])->[JoueurProtocol]{
             temp[i+1] = joueurTemp
     }
     return temp
+}
+func verifIndice(k: Int, partie: PartieProtocol)-> (Int, Int){
+    var isOK : Bool = false         // si l'indice 'k' ne vérifie pas les préconditions, isOk = false
+    var copieOrdrePassage: [JoueurProtocol] = partie.ordrePassage
+    var col : Int = 0
+    var lig : Int = 0
+    while !isOK{
+        let coord : (Int, Int) = demanderIndice()
+        let carteTemp: CarteProtocol? = copieOrdrePassage[k][coord.0, coord.1]
+        if let c: CarteProtocol = carteTemp{
+            if c.estFaceCachee{ 
+                    isOK = true
+                    col = coord.1
+                    lig = coord.0
+            }
+        }
+    }
+    return (lig, col)
 }
