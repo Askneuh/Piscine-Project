@@ -28,7 +28,7 @@ func affPaquet(paquet : [CarteProtocol?]) -> [Int]
 //Fonction d'affichage du paquet.
 //Ne sers pas dans le main, mais a permis de vérifier la création du paquet
 {
-    var res : [Int] = [Int](repeating: 0, count: 30)
+    var res : [Int] = [Int](repeating: 0, count: 60)
     for i: Int in  0..<paquet.count{
         if let carte : CarteProtocol = paquet[i]
         {
@@ -292,4 +292,5 @@ func triInsertionSurScore(T: [JoueurProtocol])->[JoueurProtocol]{
             temp[i+1] = joueurTemp
     }
     return temp
+
 }
