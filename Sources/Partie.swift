@@ -2,22 +2,68 @@ import Foundation
 
 protocol PartieProtocol {
 
+    // nbJoueur : Partie -> String
+    // précondition : dans la version 3, 2 <= nbJoueur <= 4
     var nbJoueur : Int {get}
-    var ordrePassage : [JoueurProtocol] {get set}       // définit l'ordre de passage des joueurs
-    var Centre : [CarteProtocol?]{get set}              // tableau de cartes que les joueurs selectionnent et sortent de leurs grilles pour les placer au centre
-    init(nbJoueur:Int, paquet : [CarteProtocol?], listeJoueur: [JoueurProtocol])       // créer une partie avec un nombre de joueur valide et un paquet de cartes
-    mutating func placerAuCentre(k: Int, lig: Int, col:Int)                // un joueur selectionne une carte d'indice 'k' du Centre qu'il placera dans sa grille par un mouvement valide
-    mutating func retirerDuCentre(indice:Int)->CarteProtocol    // retire l'élément d'indice 'indice' du Centre et renvoie la carte selectionnée
-    mutating func selectionner()->CarteProtocol         // selectionne aléatoirement une carte du paquet (la pioche) et la renvoie          (avec du recul, nous aurions du travailler sur le modèle de la pile pour le paquet)
-    mutating func changerOrdrePassage()                 // met à jour l'ordre de passage des joueurs à chaque tour.
-    mutating func distributionCarte()                   // placemenet des cartes issu de 'paquet' dans la grille de chaque joueur
-    mutating func firstRound()                           // définit quel joueur jouera en premier
+
+    // ordrePassage : Partie -> [Joueur]
+    // tableau de l'ordre des passsage des joueurs 
+    var ordrePassage : [JoueurProtocol] {get set}
+
+    // Centre : Partie -> [Carte?]
+    // tableau de cartes que les joueurs selectionnent et sortent de leurs grilles pour les placer au centre
+    var Centre : [CarteProtocol?]{get set}
+
+    // init : Int x [Carte?] x [Joueur] -> Partie
+    // créer une partie avec un nombre de joueur valide, un paquet de cartes et une liste de joueurs
+    init(nbJoueur:Int, paquet : [CarteProtocol?], listeJoueur: [JoueurProtocol])
+
+    // placerAuCentre : Partie x Int x Int x Int -> Partie 
+    // le joueur d'indice 'k' du tableau ordrePassage selectionne une carte d'indice de ligne 'lig', et d'indice de colonne 'col' de sa grille. La Carte selectionnée sera placée au Centre
+    // précondition : 0 <= lig <= 3 
+    //                0 <= col <= 3
+    // précondition : la carte selectionnée ne doit pas être déja retournée 
+    mutating func placerAuCentre(k: Int, lig: Int, col:Int)
+
+    // retirerDuCentre : Partie x Int -> Partie x Carte 
+    // retire l'élément d'indice 'indice' du Centre et renvoie la carte selectionnée
+    // précondition : l'indice de la carte entré en paramètre doit être valide ( la carte de l'indice ne doit pas déjà être selectionné, elle ne doit pas dépasser les limites du tablau Centre)
+    mutating func retirerDuCentre(indice:Int)->CarteProtocol
+
+    // selectionner : Partie -> Carte x Partie
+    // selectionne aléatoirement une carte du paquet (la pioche) et la renvoie 
+    // post - condition : La carte renvoyée est remplacée par un nil dans le paquet
+    mutating func selectionner()->CarteProtocol
+
+    // changerOrdrePassage : Partie -> Partie
+    // met à jour l'ordre de passage des joueurs à la fin de chaque tour
+    mutating func changerOrdrePassage()
+
+    // distributionCarte : Partie -> Partie 
+    // place des cartes issu de 'paquet' dans la grille de chaque joueur
+    // initialement, la grille des joueurs est remplie de carte numéro 0
+    mutating func distributionCarte()
+
+    //firstound : Partie -> Partie 
+    // définit quel joueur joueura en premier (celui qui a la plus petite carte commence)
+    mutating func firstRound()
 }
+
+
 struct Partie : PartieProtocol{
-    var nbJoueur: Int = 4
-    var ordrePassage : [JoueurProtocol]     // tableau définissant l'ordre des joueurs 
-    var Centre: [CarteProtocol?]            // tableau des cartes piochées par les joueurs
-    private var Paquet: [CarteProtocol?]            // paquet de carte
+    
+    // précondition : dans la version 3, 2 <= nbJoueur <= 4
+    public private(set) var nbJoueur: Int
+
+    // tableau de l'ordre des passsage des joueurs 
+    var ordrePassage : [JoueurProtocol]
+
+    // tableau de cartes que les joueurs selectionnent et sortent de leurs grilles pour les placer au centre
+    var Centre: [CarteProtocol?]
+
+    // tableau de cartes disponibles pour une partie 
+    private var Paquet: [CarteProtocol?]
+
     // initialiser une partie avec un nombre de joueur valide, et un paquet de cartes contenant un nombre d'exemplaire définit 
     init(nbJoueur: Int, paquet : [CarteProtocol?], listeJoueur: [JoueurProtocol]) {
         self.nbJoueur = nbJoueur
@@ -25,9 +71,8 @@ struct Partie : PartieProtocol{
         self.Centre = [CarteProtocol?](repeating: nil, count: nbJoueur)
         self.Paquet = paquet
 
-        // odrePassage est un tableau regroupant tous les joueurs dont on intialise le nom.
-
     }
+
 
     // distribution des cartes pour la grille de chaques joueuers
 
@@ -39,11 +84,12 @@ struct Partie : PartieProtocol{
 
     }
 
-    // lors d'un tour, un joueur selectionne une carte qu'il place dans sa grille, qui est placée dans le tableau 'Centre'
-    // précondition : - 0 <= k <= Centre.count-1
-    //                - 'k' =/= à un indice du Centre déjà séléctionné par un autre joueur
+    // le joueur d'indice 'k' du tableau ordrePassage selectionne une carte d'indice de ligne 'lig', et d'indice de colonne 'col' de sa grille. La Carte selectionnée sera placée au Centre
+    // précondition : 0 <= lig <= 3 
+    //                0 <= col <= 3
+    // précondition : la carte selectionnée ne doit pas être déja retournée 
 
-    mutating func placerAuCentre(k: Int, lig:Int, col:Int) {
+    mutating func placerAuCentre(k: Int, lig: Int, col: Int) {
         var copieOrdrePassage: [JoueurProtocol] = self.ordrePassage
         let carte: CarteProtocol? = copieOrdrePassage[k].piocher(i: lig, j: col)
         if let c: CarteProtocol = carte{
@@ -53,8 +99,8 @@ struct Partie : PartieProtocol{
         
     }
 
-
-    //renvoie une carte selectionnée aléatoirement de la pioche et met nil à la place
+    // selectionne aléatoirement une carte du paquet (la pioche) et la renvoie 
+    // post - condition : La carte renvoyée est remplacée par un nil dans le paquet
 
     mutating func selectionner()-> CarteProtocol{  
 
@@ -72,10 +118,8 @@ struct Partie : PartieProtocol{
         else{return Carte(numero : 0)} //Ce cas ne devrait jamais arriver (voir la boucle while)
     }
 
-
-    // précondition : l'indice de la carte entré en paramètre doit être valide
-
-    // retire et renvoie la carte d'un indice entré en paramètre, met nil à la place
+    // précondition : l'indice de la carte entré en paramètre doit être valide ( la carte de l'indice ne doit pas déjà être selectionné, elle ne doit pas dépasser les limites du tablau Centre)
+    // retire l'élément d'indice 'indice' du Centre et renvoie la carte selectionnée
 
     mutating func retirerDuCentre(indice:Int) -> CarteProtocol{
 
@@ -88,6 +132,8 @@ struct Partie : PartieProtocol{
 
     }
 
+    // met à jour l'ordre de passage des joueurs à la fin de chaque tour
+
     mutating func changerOrdrePassage(){
         let dernierJoueur : JoueurProtocol = ordrePassage[0]
 
@@ -96,20 +142,31 @@ struct Partie : PartieProtocol{
             ordrePassage[ordrePassage.count-1]=dernierJoueur
     }
 
-    //prenant un tableau de carte (le tableau Centre), il permet d'avoir des informations pour le cas de base 
+    // fonction nécessaire au cas de base 
 
+    //prenant un tableau de carte (le tableau Centre), permet de determiner le minimum et les indices des joueurs ayant le minimum
     //précondition : le Centre est rempli
+
     private func occMinEtIndice(Tab : [CarteProtocol?])->(occurence : Int, indice : [Int]){
-        var TabSansNul : [CarteProtocol] = [CarteProtocol](repeating:Carte(numero:0), count: self.nbJoueur) // permet de créer un tableau fait uniquement d'entier
+        
+        // permet de créer un tableau fait uniquement d'entier
+        var TabSansNul : [CarteProtocol] = [CarteProtocol](repeating:Carte(numero:0), count: self.nbJoueur)
+        
+        // copie du Centre
         for i in 0..<Tab.count{
             if let c: CarteProtocol = Tab[i]{
                 TabSansNul[i] = c
             }
         }
+
         var minimum : Int = TabSansNul[0].numero
         var occ : Int = 0
-        var indice : [Int] = [Int](repeating: 0, count: TabSansNul.count)                   // permet de stocker les indices des joueurs ayant piochés la carte de valeur miniales dans le Centre
-        var indiceMin : Int = 0                                                             // compteur pour suivre le nb d'indice trouvé pour un min donné
+
+        // permet de stocker les indices des joueurs ayant piochés la carte de valeur minimale du Centre
+        var indice : [Int] = [Int](repeating: 0, count: TabSansNul.count)
+
+        // compteur pour suivre le nb d'indice trouvé pour un min donné
+        var indiceMin : Int = 0
         
         for i: Int in 0..<Tab.count{
 
@@ -123,8 +180,12 @@ struct Partie : PartieProtocol{
 
                 minimum = TabSansNul[i].numero
                 occ = 1
-                indice = [Int](repeating: 0, count: Tab.count)                              //si un nouveau minimum a été trouvé, on reinitialise le tableau 'Indice' car les valeurs stockées ne correspondent pas à la nouvelle valeur de minimum.
-                indice[0]=i                                                                 // la premiere valeur du tableau 'Indice' réinitialisé est le minimum que le l'on de trouver
+
+                //si un nouveau minimum a été trouvé, on reinitialise le tableau 'Indice' car les valeurs stockées ne correspondent pas à la nouvelle valeur de minimum.
+                indice = [Int](repeating: 0, count: Tab.count)
+
+                // la premiere valeur du tableau 'Indice' réinitialisé est le minimum que l'on a trouvé
+                indice[0]=i
                 indiceMin=1           }
 
         }
@@ -133,7 +194,9 @@ struct Partie : PartieProtocol{
 
     }
 
-
+    // permet, dans un tableau entré en paramètre, d'échanger deux cases
+    // préconditions : tableau.count >= 2
+    //               : les indices 1 et 2 doivent être valides
     private func echanger2cases (tableau : [JoueurProtocol], indice1: Int, indice2: Int)->[JoueurProtocol]{
         var tableauModifie : [JoueurProtocol] = tableau
         let temp : JoueurProtocol = tableau[indice1]
